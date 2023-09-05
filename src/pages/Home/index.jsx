@@ -2,6 +2,8 @@ import { Heading } from '@chakra-ui/react';
 
 export default function Home() {
     return (
-        <Heading>Homee</Heading>
+        <Heading>
+            Home não, Muié
+        </Heading>
     )
 }

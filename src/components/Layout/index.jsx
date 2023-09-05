@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom'
+
 import {
   IconButton,
   Avatar,
@@ -29,15 +31,17 @@ import {
   FiMenu,
   FiBell,
   FiChevronDown,
+  FiUsers,
+  
 } from 'react-icons/fi'
 import Routes from '../../Routes'
 
 const LinkItems = [
-  { name: 'Home', icon: FiHome },
-  { name: 'Trending', icon: FiTrendingUp },
-  { name: 'Explore', icon: FiCompass },
-  { name: 'Favourites', icon: FiStar },
-  { name: 'Settings', icon: FiSettings },
+  { name: 'Home', icon: FiHome, path: '/' },
+  { name: 'Clientes', icon: FiUsers, path: '/clientes' },
+  // { name: 'Explore', icon: FiCompass, path: '/clientes' },
+  // { name: 'Favourites', icon: FiStar, path: '/clientes' },
+  // { name: 'Settings', icon: FiSettings, path: '/clientes' },
 ]
 
 const SidebarContent = ({ onClose, ...rest }) => {
@@ -59,7 +63,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon}>
+        <NavItem key={link.name} icon={link.icon} path={link.path} >
           {link.name}
         </NavItem>
       ))}
@@ -67,11 +71,13 @@ const SidebarContent = ({ onClose, ...rest }) => {
   )
 }
 
-const NavItem = ({ icon, children, ...rest }) => {
+const NavItem = ({ icon, path, children, ...rest }) => {
+  const navigate = useNavigate();
+
   return (
     <Box
       as="a"
-      href="#"
+      onClick={() => navigate(path)}
       style={{ textDecoration: 'none' }}
       _focus={{ boxShadow: 'none' }}>
       <Flex
@@ -187,7 +193,7 @@ const Layout = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   return (
-    <Box minH="100vh" bg={'white'}>
+    <Box minH="100vh" bg={'#1d202b'}>
       <SidebarContent onClose={() => onClose} display={{ base: 'none', md: 'block' }} />
       <Drawer
         isOpen={isOpen}
@@ -202,7 +208,13 @@ const Layout = () => {
       </Drawer>
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} p="4">
+      <Box 
+        ml={{
+          base: 0,
+          md: 60
+        }}
+        p="4"
+      >
         <Routes />
       </Box>
     </Box>

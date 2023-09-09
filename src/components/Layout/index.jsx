@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import {
   IconButton,
@@ -14,48 +14,32 @@ import {
   Drawer,
   DrawerContent,
   useDisclosure,
-  BoxProps,
-  FlexProps,
   Menu,
   MenuButton,
-  MenuDivider,
   MenuItem,
   MenuList,
-} from '@chakra-ui/react'
-import {
-  FiHome,
-  FiTrendingUp,
-  FiCompass,
-  FiStar,
-  FiSettings,
-  FiMenu,
-  FiBell,
-  FiChevronDown,
-  FiUsers,
-  
-} from 'react-icons/fi'
-import Routes from '../../Routes'
+} from '@chakra-ui/react';
+import { FiHome, FiMenu, FiBell, FiChevronDown, FiUsers } from 'react-icons/fi';
+import Routes from '../../Routes';
 
 const LinkItems = [
   { name: 'Home', icon: FiHome, path: '/' },
   { name: 'Clientes', icon: FiUsers, path: '/clientes' },
-  // { name: 'Explore', icon: FiCompass, path: '/clientes' },
-  // { name: 'Favourites', icon: FiStar, path: '/clientes' },
-  // { name: 'Settings', icon: FiSettings, path: '/clientes' },
-]
+];
 
 const SidebarContent = ({ onClose, ...rest }) => {
   return (
     <Box
       transition="3s ease"
       bg={'gray.900'}
-      color='white'
+      color="white"
       borderRight="1px"
       borderRightColor={useColorModeValue('gray.800', 'gray.900')}
       w={{ base: 'full', md: 60 }}
       pos="fixed"
       h="full"
-      {...rest}>
+      {...rest}
+    >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
           Logo
@@ -63,23 +47,26 @@ const SidebarContent = ({ onClose, ...rest }) => {
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon} path={link.path} >
+        <NavItem key={link.name} icon={link.icon} path={link.path}>
           {link.name}
         </NavItem>
       ))}
     </Box>
-  )
-}
+  );
+};
 
 const NavItem = ({ icon, path, children, ...rest }) => {
   const navigate = useNavigate();
+
+  const location = useLocation();
 
   return (
     <Box
       as="a"
       onClick={() => navigate(path)}
       style={{ textDecoration: 'none' }}
-      _focus={{ boxShadow: 'none' }}>
+      _focus={{ boxShadow: 'none' }}
+    >
       <Flex
         align="center"
         p="4"
@@ -91,7 +78,9 @@ const NavItem = ({ icon, path, children, ...rest }) => {
           bg: 'pink.400',
           color: 'white',
         }}
-        {...rest}>
+        bg={location.pathname.replace('/', '').split('/')[0] === (path.replace('/', '')) ? 'pink.400' : undefined}
+        {...rest}
+      >
         {icon && (
           <Icon
             mr="4"
@@ -105,8 +94,8 @@ const NavItem = ({ icon, path, children, ...rest }) => {
         {children}
       </Flex>
     </Box>
-  )
-}
+  );
+};
 
 const MobileNav = ({ onOpen, ...rest }) => {
   return (
@@ -116,11 +105,12 @@ const MobileNav = ({ onOpen, ...rest }) => {
       height="20"
       alignItems="center"
       bg={'gray.900'}
-      color='white'
+      color="white"
       borderBottomWidth="1px"
       borderBottomColor={useColorModeValue('gray.800', 'gray.900')}
       justifyContent={{ base: 'space-between', md: 'flex-end' }}
-      {...rest}>
+      {...rest}
+    >
       <IconButton
         display={{ base: 'flex', md: 'none' }}
         onClick={onOpen}
@@ -133,25 +123,30 @@ const MobileNav = ({ onOpen, ...rest }) => {
         display={{ base: 'flex', md: 'none' }}
         fontSize="2xl"
         fontFamily="monospace"
-        fontWeight="bold">
+        fontWeight="bold"
+      >
         Logo
       </Text>
 
       <HStack spacing={{ base: '0', md: '6' }}>
         <IconButton
-            size="lg"
-            variant="ghost"
-            aria-label="open menu"
-            color='whiteAlpha.700'
-            _hover={{
-                bg: 'whiteAlpha.200',
-                color: 'white',
-            }}
-            icon={<FiBell />}
+          size="lg"
+          variant="ghost"
+          aria-label="open menu"
+          color="whiteAlpha.700"
+          _hover={{
+            bg: 'whiteAlpha.200',
+            color: 'white',
+          }}
+          icon={<FiBell />}
         />
         <Flex alignItems={'center'}>
           <Menu>
-            <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
+            <MenuButton
+              py={2}
+              transition="all 0.3s"
+              _focus={{ boxShadow: 'none' }}
+            >
               <HStack>
                 <Avatar
                   size={'sm'}
@@ -163,7 +158,8 @@ const MobileNav = ({ onOpen, ...rest }) => {
                   display={{ base: 'none', md: 'flex' }}
                   alignItems="flex-start"
                   spacing="1px"
-                  ml="2">
+                  ml="2"
+                >
                   <Text fontSize="sm">Justina Clark</Text>
                   <Text fontSize="xs" color="whiteAlpha.700">
                     Admin
@@ -176,49 +172,52 @@ const MobileNav = ({ onOpen, ...rest }) => {
             </MenuButton>
             <MenuList
               bg={'gray.900'}
-              borderColor={useColorModeValue('blackAlpha.200', 'gray.700')}>
+              borderColor={useColorModeValue('blackAlpha.200', 'gray.700')}
+            >
               {/* <MenuDivider /> */}
-              <MenuItem
-                bg={'gray.900'}
-              >Sair</MenuItem>
+              <MenuItem bg={'gray.900'}>Sair</MenuItem>
             </MenuList>
           </Menu>
         </Flex>
       </HStack>
     </Flex>
-  )
-}
+  );
+};
 
 const Layout = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <Box minH="100vh" bg={'#1d202b'}>
-      <SidebarContent onClose={() => onClose} display={{ base: 'none', md: 'block' }} />
+      <SidebarContent
+        onClose={() => onClose}
+        display={{ base: 'none', md: 'block' }}
+      />
       <Drawer
         isOpen={isOpen}
         placement="left"
         onClose={onClose}
         returnFocusOnClose={false}
         onOverlayClick={onClose}
-        size="full">
+        size="full"
+      >
         <DrawerContent>
           <SidebarContent onClose={onClose} />
         </DrawerContent>
       </Drawer>
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
-      <Box 
+      <Box
         ml={{
           base: 0,
-          md: 60
+          md: 60,
         }}
         p="4"
       >
         <Routes />
       </Box>
     </Box>
-  )
-}
+  );
+};
 
-export default Layout
+export default Layout;

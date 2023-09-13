@@ -25,6 +25,8 @@ import Routes from '../../Routes';
 const LinkItems = [
   { name: 'Home', icon: FiHome, path: '/' },
   { name: 'Clientes', icon: FiUsers, path: '/clientes' },
+  { name: 'Colaborador', icon: FiUsers, path: '/colaborador' },
+  { name: 'Funcao', icon: FiUsers, path: '/funcao' },
 ];
 
 const SidebarContent = ({ onClose, ...rest }) => {

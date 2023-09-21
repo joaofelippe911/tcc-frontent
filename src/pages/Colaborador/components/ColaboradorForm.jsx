@@ -39,7 +39,7 @@ export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
         nome,
         cpf: onlyNumbers(cpf),
         telefone: onlyNumbers(telefone),
-        funcao_id: funcao,
+       // funcao_id: funcao,
       });
 
       setIsSubmiting(false);
@@ -164,14 +164,15 @@ export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
           type="text"
           name="nome"
           value={nome}
-          onChange={(e) => setFuncaoId(e.target.value)}
+         // onChange={(e) => setFuncaoId(e.target.value)}
+        // <option value="0">Selecione uma função</option>
+        //{funcao.map((funcao) => (
+          //<option key={funcao.id} value={funcao.id}>
+           // {funcao.nome}
+         // </option>
+        //))}
         />
-        <option value="0">Selecione uma função</option>
-        {cursos.map((funcao) => (
-          <option key={funcao.id} value={funcao.id}>
-            {funcao.nome}
-          </option>
-        ))}
+        
 
         <Button
           width="full"

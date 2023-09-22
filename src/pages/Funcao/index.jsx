@@ -39,16 +39,15 @@ export default function Funcao() {
 
   const handleClickDeleteFuncao = useCallback((funcao) => {
     setFuncaoBeingDelete(funcao);
-   // setIsDeleteFuncaoModalVisible(true);
+    setIsDeleteClienteModalVisible(true);
   }, []);
 
   const handleConfirmDeleteFuncao = useCallback(async () => {
     try {
-      await httpClient.delete(`/funcao/${funcaoBeingDeleted?.id}`);
+      await httpClient.delete(`/funcaos/${funcaoBeingDeleted?.id}`);
 
       setFuncao((prevState) =>
-        prevState.filter((funcao) => funcao.id !== funcaoBeingDeleted?.id)
-      );
+        prevState.filter((funcao) => funcao.id !== funcaoBeingDeleted?.id));
 
    
       setFuncaoBeingDelete(undefined);
@@ -72,7 +71,7 @@ export default function Funcao() {
   }, [funcaoBeingDeleted, toast]);
 
   const handleClickCancelDeleteFuncao = useCallback(() => {
- 
+  
     setFuncaoBeingDelete(undefined);
   }, []);
 
@@ -81,7 +80,7 @@ export default function Funcao() {
 
     async function loadFuncao() {
       try {
-        const { data } = await httpClient.get('/funcao', {
+        const { data } = await httpClient.get('/funcaos', {
           signal: controller.signal,
         });
 
@@ -125,7 +124,7 @@ export default function Funcao() {
             </Tr>
           </Thead>
           <Tbody>
-            {Funcao.map((funcao) => (
+            {funcao.map((funcao) => (
               <Tr key={funcao.id}>
                 <Td>{funcao.nome}</Td>
                 <Td>

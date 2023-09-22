@@ -4,12 +4,16 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
+  Select,
+  useToast,
 } from "@chakra-ui/react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useErrors from "../../../hooks/useErrors";
 import { formatCpf } from "../../../utils/formatCpf";
 import { onlyNumbers } from "../../../utils/onlyNumbers";
 import formatPhone from "../../../utils/formatPhone";
+import { httpClient } from "../../../services/HttpClient";
+import { AxiosError } from "axios";
 
 export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
   const [nome, setNome] = useState(colaborador?.nome || "");
@@ -19,8 +23,13 @@ export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
   const [telefone, setTelefone] = useState(
     colaborador?.telefone ? formatPhone(colaborador.telefone) : ""
   );
-  const [funcao_id, setFuncao] = useState(colaborador?.funcao || "");
+  // funcao
+  const [funcao_id, setFuncao] = useState(colaborador?.funcao_id || "");
   const [isSubmiting, setIsSubmiting] = useState(false);
+  // funcao
+  const [funcoes, setFuncoes] = useState([]);
+  
+  const toast = useToast();
 
   const {
     setError,
@@ -39,7 +48,7 @@ export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
         nome,
         cpf: onlyNumbers(cpf),
         telefone: onlyNumbers(telefone),
-       // funcao_id: funcao,
+        funcao_id,
       });
 
       setIsSubmiting(false);
@@ -97,9 +106,50 @@ export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
       removeError("telefone");
     },
     [setError, removeError]
+
   );
 
-  const isFormValid = nome && cpf && telefone && errors.length === 0;
+  // funcao
+  const handleFuncaoChange = useCallback(
+    (e) => {
+      setFuncao(e.target.value);
+
+      if (!e.target.value) {
+        setError({ field: "funcao", message: "Função é obrigatório!" });
+        return;
+      }
+
+      removeError("funcao");
+    },
+    [setError, removeError]
+  );
+
+
+  useEffect(() => {
+    async function loadFuncoes() {
+      try {
+        const { data } = await httpClient.get('/funcoes');
+
+        setFuncoes(data);
+      } catch (err) {
+        if (err instanceof AxiosError && err.name === 'CanceledError') {
+          return;
+        }
+
+        toast({
+          title: 'Erro ao carregar funções!',
+          status: 'error',
+          duration: 10000,
+          isClosable: true,
+          position: 'top-right',
+        });
+      }
+    }
+
+    loadFuncoes();
+  }, []);
+
+  const isFormValid = nome && cpf && telefone && funcao_id && errors.length === 0;
 
   return (
     <form onSubmit={handleSubmit}>
@@ -158,22 +208,29 @@ export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
         )}
       </FormControl>
 
-      <form onSubmit={handleSubmit}>
+      <FormControl
+        marginTop={4}
+        isInvalid={Boolean(getErrorMessageByFieldName("funcao"))}
+      >
         <FormLabel>Função</FormLabel>
-        <Input
-          type="text"
-          name="nome"
-          value={nome}
-         // onChange={(e) => setFuncaoId(e.target.value)}
-        // <option value="0">Selecione uma função</option>
-        //{funcao.map((funcao) => (
-          //<option key={funcao.id} value={funcao.id}>
-           // {funcao.nome}
-         // </option>
-        //))}
-        />
-        
-
+        {/* funcao */}
+        <Select
+          placeholder="Selecione a função"
+          onChange={handleFuncaoChange}
+          value={funcao_id}
+        >
+          {
+            funcoes.map((funcao) => (
+              <option value={funcao.id} key={funcao.id}>{funcao.nome}</option>
+            ))
+          }
+        </Select>
+        {Boolean(getErrorMessageByFieldName("funcao")) && (
+          <FormErrorMessage>
+            {getErrorMessageByFieldName("funcao")}
+          </FormErrorMessage>
+        )}
+      </FormControl>
         <Button
           width="full"
           mt={4}
@@ -183,7 +240,6 @@ export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
         >
           Salvar
         </Button>
-      </form>
     </form>
   );
 }

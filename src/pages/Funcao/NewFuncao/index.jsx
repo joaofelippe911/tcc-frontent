@@ -11,7 +11,7 @@ export default function NewFuncao() {
   const handleSubmit = useCallback(
     async (funcao) => {
       try {
-        await httpClient.post('/funcao', funcao);
+        await httpClient.post('/funcoes', funcao);
         toast({
             title: 'Funcao cadastrado com sucesso!',
             status: 'success',

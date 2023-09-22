@@ -94,7 +94,7 @@ export default function Colaborador() {
         }
 
         toast({
-          title: 'Erro ao buscar os colaboradors!',
+          title: 'Erro ao buscar os colaborador!',
           status: 'error',
           duration: 10000,
           isClosable: true,

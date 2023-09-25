@@ -11,7 +11,7 @@ export default function NewColaborador() {
   const handleSubmit = useCallback(
     async (colaborador) => {
       try {
-        await httpClient.post('/colaborador', colaborador);
+        await httpClient.post('/colaboradores', colaborador);
         toast({
             title: 'Colaborador cadastrado com sucesso!',
             status: 'success',

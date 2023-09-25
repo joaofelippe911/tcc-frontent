@@ -44,7 +44,7 @@ export default function Funcao() {
 
   const handleConfirmDeleteFuncao = useCallback(async () => {
     try {
-      await httpClient.delete(`/funcaos/${funcaoBeingDeleted?.id}`);
+      await httpClient.delete(`/funcoes/${funcaoBeingDeleted?.id}`);
 
       setFuncao((prevState) =>
         prevState.filter((funcao) => funcao.id !== funcaoBeingDeleted?.id));
@@ -80,7 +80,7 @@ export default function Funcao() {
 
     async function loadFuncao() {
       try {
-        const { data } = await httpClient.get('/funcaos', {
+        const { data } = await httpClient.get('/funcoes', {
           signal: controller.signal,
         });
 

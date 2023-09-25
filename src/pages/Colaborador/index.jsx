@@ -46,7 +46,7 @@ export default function Colaborador() {
 
   const handleConfirmDeleteColaborador = useCallback(async () => {
     try {
-      await httpClient.delete(`/colaborador/${colaboradorBeingDeleted?.id}`);
+      await httpClient.delete(`/colaboradores/${colaboradorBeingDeleted?.id}`);
 
       setColaborador((prevState) =>
         prevState.filter((colaborador) => colaborador.id !== colaboradorBeingDeleted?.id)
@@ -81,9 +81,9 @@ export default function Colaborador() {
   useEffect(() => {
     const controller = new AbortController();
 
-    async function loadColaboradors() {
+    async function loadColaboradores() {
       try {
-        const { data } = await httpClient.get('/colaboradors', {
+        const { data } = await httpClient.get('/colaboradores', {
           signal: controller.signal,
         });
 
@@ -103,7 +103,7 @@ export default function Colaborador() {
       }
     }
 
-    loadColaboradors();
+    loadColaboradores();
 
     return () => {
       controller.abort();
@@ -120,7 +120,7 @@ export default function Colaborador() {
       </Box>
       <TableContainer marginTop={16}>
         <Table variant="simple">
-          <TableCaption>colaboradores cadastrados</TableCaption>
+          <TableCaption>Colaboradores cadastrados</TableCaption>
           <Thead>
             <Tr>
               <Th>Nome</Th>

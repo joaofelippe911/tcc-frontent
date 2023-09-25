@@ -1,5 +1,5 @@
 import { Box, Heading, useToast } from '@chakra-ui/react';
-import { FuncaoFormForm } from '../components/FuncaoForm';
+import { FuncaoForm } from '../components/FuncaoForm';
 import { useCallback, useEffect, useState } from 'react';
 import { httpClient } from '../../../services/HttpClient';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -17,7 +17,7 @@ export default function EditFuncao() {
 
     async function loadFuncao() {
       try {
-        const { data } = await httpClient.get(`/funcao/${id}`, {
+        const { data } = await httpClient.get(`/funcoes/${id}`, {
           signal: controller.signal,
         });
 
@@ -28,7 +28,7 @@ export default function EditFuncao() {
         }
 
         toast({
-          title: 'Erro ao buscar funçãp!',
+          title: 'Erro ao buscar função!',
           status: 'error',
           duration: 10000,
           isClosable: true,
@@ -48,7 +48,7 @@ export default function EditFuncao() {
   const handleSubmit = useCallback(
     async (funcao) => {
       try {
-        await httpClient.patch(`/funcao/${id}`, funcao);
+        await httpClient.patch(`/funcoes/${id}`, funcao);
         toast({
           title: 'funcao editado com sucesso!',
           status: 'success',
@@ -73,11 +73,11 @@ export default function EditFuncao() {
   return (
     <Box>
       <Heading marginBottom={8}>Editar Funcao</Heading>
-      <funcaoForm
-        onSubmit={handleSubmit}
-        funcao={funcao}
-        key={funcao?.id}
+        <FuncaoForm
+          onSubmit={handleSubmit}
+          funcao={funcao}
+          key={funcao?.id}
         />
-    </Box>
+   </Box>
   );
 }

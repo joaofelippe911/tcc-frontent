@@ -14,20 +14,23 @@ import { onlyNumbers } from "../../../utils/onlyNumbers";
 import formatPhone from "../../../utils/formatPhone";
 import { httpClient } from "../../../services/HttpClient";
 import { AxiosError } from "axios";
+import isEmailValid from '../../../utils/isEmailValid';
+
 
 export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
   const [nome, setNome] = useState(colaborador?.nome || "");
   const [cpf, setCpf] = useState(
-    colaborador?.cpf ? formatCpf(colaborador.cpf) : ""
-  );
+    colaborador?.cpf ? formatCpf(colaborador.cpf) : "");
   const [telefone, setTelefone] = useState(
-    colaborador?.telefone ? formatPhone(colaborador.telefone) : ""
-  );
+    colaborador?.telefone ? formatPhone(colaborador.telefone) : "");
   // funcao
   const [funcao_id, setFuncao] = useState(colaborador?.funcao_id || "");
   const [isSubmiting, setIsSubmiting] = useState(false);
   // funcao
   const [funcoes, setFuncoes] = useState([]);
+
+  const [email, setEmail] = useState(colaborador?.email || "");
+  const [password, setPassowrd] = useState(colaborador?.password || "");
   
   const toast = useToast();
 
@@ -49,11 +52,13 @@ export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
         cpf: onlyNumbers(cpf),
         telefone: onlyNumbers(telefone),
         funcao_id,
+        email,
+        password
       });
 
       setIsSubmiting(false);
     },
-    [onSubmit, nome, cpf, telefone, funcao_id]
+    [onSubmit, nome, cpf, telefone, funcao_id, email, password]
   );
 
   const handleNomeChange = useCallback(
@@ -124,6 +129,40 @@ export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
     [setError, removeError]
   );
 
+  const handleEmailChange = useCallback(
+    (e) => {
+      setEmail(e.target.value);
+
+      if (!e.target.value) {
+        setError({ field: 'email', message: 'Email é obrigatório!' });
+        return;
+      }
+
+      if (!isEmailValid(e.target.value)) {
+        setError({ field: 'email', message: 'Email inválido!' });
+        return;
+      }
+
+      removeError('email');
+    },
+    [setError, removeError]
+  );
+
+
+  const handlePasswordChange = useCallback(
+    (e) => {
+      setPassowrd(e.target.value);
+
+      if (!e.target.value) {
+        setError({ field: "password", message: "Senha é obrigatório!" });
+        return;
+      }
+
+      removeError("password");
+    },
+    [setError, removeError]
+  );
+
 
   useEffect(() => {
     async function loadFuncoes() {
@@ -149,7 +188,7 @@ export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
     loadFuncoes();
   }, []);
 
-  const isFormValid = nome && cpf && telefone && funcao_id && errors.length === 0;
+  const isFormValid = nome && cpf && telefone && funcao_id && email && password && errors.length === 0;
 
   return (
     <form onSubmit={handleSubmit}>
@@ -168,6 +207,7 @@ export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
           </FormErrorMessage>
         )}
       </FormControl>
+
 
       <FormControl
         marginTop={4}
@@ -228,6 +268,43 @@ export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
         {Boolean(getErrorMessageByFieldName("funcao")) && (
           <FormErrorMessage>
             {getErrorMessageByFieldName("funcao")}
+          </FormErrorMessage>
+        )}
+      </FormControl>
+
+
+      <FormControl
+        marginTop={4}
+        isInvalid={Boolean(getErrorMessageByFieldName('email'))}
+      >
+        <FormLabel>Email</FormLabel>
+        <Input
+          type="email"
+          name="email"
+          value={email}
+          onChange={handleEmailChange}
+          placeholder="exemplo@exemplo.com"
+        />
+        {Boolean(getErrorMessageByFieldName('email')) && (
+          <FormErrorMessage>
+            {getErrorMessageByFieldName('email')}
+          </FormErrorMessage>
+        )}
+      </FormControl>
+
+
+      <FormControl isInvalid={Boolean(getErrorMessageByFieldName("password"))}>
+        <FormLabel>Senha</FormLabel>
+        <Input
+          type="password"
+          name="password"
+          value={password}
+          onChange={handlePasswordChange}
+          placeholder="Digite uma senha válida"
+        />
+        {Boolean(getErrorMessageByFieldName("password")) && (
+          <FormErrorMessage>
+            {getErrorMessageByFieldName("password")}
           </FormErrorMessage>
         )}
       </FormControl>

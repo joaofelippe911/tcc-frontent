@@ -21,39 +21,40 @@ import { httpClient } from '../../services/HttpClient';
 import { AxiosError } from 'axios';
 import Modal from '../../components/Modal';
 
-export default function Funcao() {
-  const [funcao, setFuncao] = useState([]);
-  const [isDeleteFuncaoModalVisible, setIsDeleteFuncaoModalVisible] =
+export default function Produtos() {
+  const [produtos, setProdutos] = useState([]);
+  const [isDeleteProdutoModalVisible, setIsDeleteProdutoModalVisible] =
     useState(false);
-  const [funcaoBeingDeleted, setFuncaoBeingDelete] = useState();
+  const [produtoBeingDeleted, setProdutoBeingDelete] = useState();
 
   const navigate = useNavigate();
   const toast = useToast();
 
-  const handleClickEditFuncao = useCallback(
+  const handleClickEditProduto = useCallback(
     (id) => {
-      navigate(`/funcao/editar/${id}`);
+      navigate(`/produtos/editar/${id}`);
     },
     [navigate]
   );
 
-  const handleClickDeleteFuncao = useCallback((funcao) => {
-    setFuncaoBeingDelete(funcao);
-    setIsDeleteFuncaoModalVisible(true);
+  const handleClickDeleteProduto = useCallback((produto) => {
+    setProdutoBeingDelete(Produtos);
+    setIsDeleteProdutoModalVisible(true);
   }, []);
 
-  const handleConfirmDeleteFuncao = useCallback(async () => {
+  const handleConfirmDeleteProduto = useCallback(async () => {
     try {
-      await httpClient.delete(`/funcoes/${funcaoBeingDeleted?.id}`);
+      await httpClient.delete(`/produtos/${produtoBeingDeleted?.id}`);
 
-      setFuncao((prevState) =>
-        prevState.filter((funcao) => funcao.id !== funcaoBeingDeleted?.id));
+      setProdutos((prevState) =>
+        prevState.filter((produto) => produto.id !== produtoBeingDeleted?.id)
+      );
 
-      setIsDeleteFuncaoModalVisible(false);
-      setFuncaoBeingDelete(undefined);
+      setIsDeleteProdutoModalVisible(false);
+      setProdutoBeingDelete(undefined);
 
       toast({
-        title: 'Função deletado com sucesso!',
+        title: 'Produto deletado com sucesso!',
         status: 'success',
         duration: 5000,
         isClosable: true,
@@ -61,37 +62,37 @@ export default function Funcao() {
       });
     } catch (err) {
       toast({
-        title: 'Erro ao deletar função!',
+        title: 'Erro ao deletar Produto!',
         status: 'error',
         duration: 10000,
         isClosable: true,
         position: 'top-right',
       });
     }
-  }, [funcaoBeingDeleted, toast]);
+  }, [produtoBeingDeleted, toast]);
 
-  const handleClickCancelDeleteFuncao = useCallback(() => {
-  
-    setFuncaoBeingDelete(undefined);
+  const handleClickCancelDeleteProduto = useCallback(() => {
+    setIsDeleteProdutoModalVisible(false);
+    setProdutoBeingDelete(undefined);
   }, []);
 
   useEffect(() => {
     const controller = new AbortController();
 
-    async function loadFuncao() {
+    async function loadProdutos() {
       try {
-        const { data } = await httpClient.get('/funcoes', {
+        const { data } = await httpClient.get('/produtos', {
           signal: controller.signal,
         });
 
-        setFuncao(data);
+        setProdutos(data);
       } catch (err) {
         if (err instanceof AxiosError && err.name === 'CanceledError') {
           return;
         }
 
         toast({
-          title: 'Erro ao buscar Funcao!',
+          title: 'Erro ao buscar os Produtos!',
           status: 'error',
           duration: 10000,
           isClosable: true,
@@ -100,7 +101,7 @@ export default function Funcao() {
       }
     }
 
-    loadFuncao();
+    loadProdutos();
 
     return () => {
       controller.abort();
@@ -110,30 +111,36 @@ export default function Funcao() {
   return (
     <Box>
       <Box display="flex" alignItems="center" justifyContent="space-between">
-        <Heading>Funcao</Heading>
-        <Button onClick={() => navigate('/funcao/adicionar')}>
-          Adicionar Função
+        <Heading>Produtos</Heading>
+        <Button onClick={() => navigate('/produtos/adicionar')}>
+          Adicionar Produtos
         </Button>
       </Box>
       <TableContainer marginTop={16}>
         <Table variant="simple">
-          <TableCaption>Funções cadastradas</TableCaption>
+          <TableCaption>Produtos Cadastrados</TableCaption>
           <Thead>
             <Tr>
               <Th>Nome</Th>
+              <Th>Valor</Th>
+              <Th>Estoque</Th>
+              <Th>Imagem</Th>
+              <Th>Ações</Th>
             </Tr>
           </Thead>
           <Tbody>
-            {funcao.map((funcao) => (
-              <Tr key={funcao.id}>
-                <Td>{funcao.nome}</Td>
+            {produtos.map((produto) => (
+              <Tr key={produto.id}>
+                <Td>{produto.nome}</Td>
+                <Td>{produto.valor}</Td>
+                <Td>{produto.estoque}</Td>
                 <Td>
                   <Flex>
                     <FiEdit
                       fontSize={20}
                       color="#ED64A6"
                       cursor="pointer"
-                      onClick={() => handleClickEditFuncao(funcao.id)}
+                      onClick={() => handleClickEditProduto(produto.id)}
                       style={{
                         marginRight: 8,
                       }}
@@ -142,7 +149,7 @@ export default function Funcao() {
                       fontSize={20}
                       color="#FC5050"
                       cursor="pointer"
-                      onClick={() => handleClickDeleteFuncao(funcao)}
+                      onClick={() => handleClickDeleteProduto(produtos)}
                     />
                   </Flex>
                 </Td>
@@ -152,11 +159,11 @@ export default function Funcao() {
         </Table>
       </TableContainer>
       <Modal
-      open={isDeleteFuncaoModalVisible}             
-        title={`Deseja realmente deletar "${funcaoBeingDeleted?.nome}"`}
-        onConfirm={handleConfirmDeleteFuncao}
+        open={isDeleteProdutoModalVisible}
+        title={`Deseja realmente deletar "${produtoBeingDeleted?.nome}"`}
+        onConfirm={handleConfirmDeleteProduto}
         confirmText="Deletar"
-        onCancel={handleClickCancelDeleteFuncao}
+        onCancel={handleClickCancelDeleteProduto}
       />
     </Box>
   );

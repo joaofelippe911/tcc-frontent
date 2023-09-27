@@ -18,42 +18,44 @@ import {
 import { FiEdit, FiTrash } from 'react-icons/fi';
 
 import { httpClient } from '../../services/HttpClient';
+import { formatCnpj } from '../../utils/formatCnpj';
 import { AxiosError } from 'axios';
 import Modal from '../../components/Modal';
 
-export default function Funcao() {
-  const [funcao, setFuncao] = useState([]);
-  const [isDeleteFuncaoModalVisible, setIsDeleteFuncaoModalVisible] =
+export default function Fornecedores() {
+  const [fornecedores, setFornecedores] = useState([]);
+  const [isDeleteFornecedorModalVisible, setIsDeleteFornecedorModalVisible] =
     useState(false);
-  const [funcaoBeingDeleted, setFuncaoBeingDelete] = useState();
+  const [fornecedorBeingDeleted, setFornecedorBeingDelete] = useState();
 
   const navigate = useNavigate();
   const toast = useToast();
 
-  const handleClickEditFuncao = useCallback(
+  const handleClickEditFornecedor = useCallback(
     (id) => {
-      navigate(`/funcao/editar/${id}`);
+      navigate(`/fornecedores/editar/${id}`);
     },
     [navigate]
   );
 
-  const handleClickDeleteFuncao = useCallback((funcao) => {
-    setFuncaoBeingDelete(funcao);
-    setIsDeleteFuncaoModalVisible(true);
+  const handleClickDeleteFornecedor = useCallback((fornecedor) => {
+    setFornecedorBeingDelete(fornecedor);
+    setIsDeleteFornecedorModalVisible(true);
   }, []);
 
-  const handleConfirmDeleteFuncao = useCallback(async () => {
+  const handleConfirmDeleteFornecedor = useCallback(async () => {
     try {
-      await httpClient.delete(`/funcoes/${funcaoBeingDeleted?.id}`);
+      await httpClient.delete(`/fornecedores/${fornecedorBeingDeleted?.id}`);
 
-      setFuncao((prevState) =>
-        prevState.filter((funcao) => funcao.id !== funcaoBeingDeleted?.id));
+      setFornecedores((prevState) =>
+        prevState.filter((fornecedor) => fornecedor.id !== fornecedorBeingDeleted?.id)
+      );
 
-      setIsDeleteFuncaoModalVisible(false);
-      setFuncaoBeingDelete(undefined);
+      setIsDeleteFornecedorModalVisible(false);
+      setFornecedorBeingDelete(undefined);
 
       toast({
-        title: 'Função deletado com sucesso!',
+        title: 'Fornecedor deletado com sucesso!',
         status: 'success',
         duration: 5000,
         isClosable: true,
@@ -61,37 +63,37 @@ export default function Funcao() {
       });
     } catch (err) {
       toast({
-        title: 'Erro ao deletar função!',
+        title: 'Erro ao deletar fornecedor!',
         status: 'error',
         duration: 10000,
         isClosable: true,
         position: 'top-right',
       });
     }
-  }, [funcaoBeingDeleted, toast]);
+  }, [fornecedorBeingDeleted, toast]);
 
-  const handleClickCancelDeleteFuncao = useCallback(() => {
-  
-    setFuncaoBeingDelete(undefined);
+  const handleClickCancelDeleteFornecedor = useCallback(() => {
+    setIsDeleteFornecedorModalVisible(false);
+    setFornecedorBeingDelete(undefined);
   }, []);
 
   useEffect(() => {
     const controller = new AbortController();
 
-    async function loadFuncao() {
+    async function loadFornecedores() {
       try {
-        const { data } = await httpClient.get('/funcoes', {
+        const { data } = await httpClient.get('/fornecedores', {
           signal: controller.signal,
         });
 
-        setFuncao(data);
+        setFornecedores(data);
       } catch (err) {
         if (err instanceof AxiosError && err.name === 'CanceledError') {
           return;
         }
 
         toast({
-          title: 'Erro ao buscar Funcao!',
+          title: 'Erro ao buscar os fornecedores!',
           status: 'error',
           duration: 10000,
           isClosable: true,
@@ -100,7 +102,7 @@ export default function Funcao() {
       }
     }
 
-    loadFuncao();
+    loadFornecedores();
 
     return () => {
       controller.abort();
@@ -110,30 +112,33 @@ export default function Funcao() {
   return (
     <Box>
       <Box display="flex" alignItems="center" justifyContent="space-between">
-        <Heading>Funcao</Heading>
-        <Button onClick={() => navigate('/funcao/adicionar')}>
-          Adicionar Função
+        <Heading>Fornecedores</Heading>
+        <Button onClick={() => navigate('/fornecedores/adicionar')}>
+          Adicionar fornecedor
         </Button>
       </Box>
       <TableContainer marginTop={16}>
         <Table variant="simple">
-          <TableCaption>Funções cadastradas</TableCaption>
+          <TableCaption>Fornecedores cadastrados</TableCaption>
           <Thead>
             <Tr>
               <Th>Nome</Th>
+              <Th>CNPJ</Th>     
+              <Th>Ações</Th>
             </Tr>
           </Thead>
           <Tbody>
-            {funcao.map((funcao) => (
-              <Tr key={funcao.id}>
-                <Td>{funcao.nome}</Td>
+            {fornecedores.map((fornecedor) => (
+              <Tr key={fornecedor.id}>
+                <Td>{fornecedor.nome}</Td>
+                <Td>{formatCnpj(fornecedor.cnpj)}</Td>
                 <Td>
                   <Flex>
                     <FiEdit
                       fontSize={20}
                       color="#ED64A6"
                       cursor="pointer"
-                      onClick={() => handleClickEditFuncao(funcao.id)}
+                      onClick={() => handleClickEditFornecedor(fornecedor.id)}
                       style={{
                         marginRight: 8,
                       }}
@@ -142,7 +147,7 @@ export default function Funcao() {
                       fontSize={20}
                       color="#FC5050"
                       cursor="pointer"
-                      onClick={() => handleClickDeleteFuncao(funcao)}
+                      onClick={() => handleClickDeleteFornecedor(fornecedor)}
                     />
                   </Flex>
                 </Td>
@@ -152,11 +157,11 @@ export default function Funcao() {
         </Table>
       </TableContainer>
       <Modal
-      open={isDeleteFuncaoModalVisible}             
-        title={`Deseja realmente deletar "${funcaoBeingDeleted?.nome}"`}
-        onConfirm={handleConfirmDeleteFuncao}
+        open={isDeleteFornecedorModalVisible}
+        title={`Deseja realmente deletar "${fornecedorBeingDeleted?.nome}"`}
+        onConfirm={handleConfirmDeleteFornecedor}
         confirmText="Deletar"
-        onCancel={handleClickCancelDeleteFuncao}
+        onCancel={handleClickCancelDeleteFornecedor}
       />
     </Box>
   );

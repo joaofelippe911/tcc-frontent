@@ -21,12 +21,15 @@ import {
 } from '@chakra-ui/react';
 import { FiHome, FiMenu, FiBell, FiChevronDown, FiUsers } from 'react-icons/fi';
 import Routes from '../../Routes';
+import logo from './logo/logo.png';
 
 const LinkItems = [
   { name: 'Home', icon: FiHome, path: '/' },
   { name: 'Clientes', icon: FiUsers, path: '/clientes' },
   { name: 'Colaborador', icon: FiUsers, path: '/colaborador' },
   { name: 'Funcao', icon: FiUsers, path: '/funcao' },
+  { name: 'Fornecedores', icon: FiUsers, path: '/fornecedores' },
+  { name: 'Produtos', icon: FiUsers, path: '/produtos' },
 ];
 
 const SidebarContent = ({ onClose, ...rest }) => {
@@ -43,9 +46,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
       {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-          Logo
-        </Text>
+           <img src={logo} alt='logo' height={5}></img>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (

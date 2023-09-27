@@ -9,6 +9,14 @@ import NewColaborador from './pages/Colaborador/NewColaborador';
 import EditColaborador from './pages/Colaborador/EditColaborador';
 import NewFuncao from './pages/Funcao/NewFuncao';
 import EditFuncao from './pages/Funcao/EditFuncao';
+import Fornecedores from './pages/Fornecedores/'
+import EditFornecedor from './pages/Fornecedores/EditFornecedor';
+import NewFornecedor from './pages/Fornecedores/NewFornecedor'
+import Produtos from './pages/Produtos'
+import EditProdutos from './pages/Produtos/EditProduto'
+import NewProdutos from './pages/Produtos/NewProduto'
+import NewProduto from './pages/Produtos/NewProduto';
+
 
 export default function Router() {
   return (
@@ -26,6 +34,14 @@ export default function Router() {
       <Route path="/funcao" element={<Funcao />} />
       <Route path="/funcao/adicionar" element={<NewFuncao/>} />
       <Route path="/funcao/editar/:id" element={<EditFuncao />}/> 
+
+      <Route path="/fornecedores" element={<Fornecedores />} />
+      <Route path="/fornecedores/adicionar" element={<NewFornecedor/>} />
+      <Route path="/fornecedores/editar/:id" element={<EditFornecedor/>}/> 
+
+      <Route path="/produtos" element={<Produtos />} />
+      <Route path="/produtos/adicionar" element={<NewProduto/>} />
+      <Route path="/produtos/editar/:id" element={<EditProdutos/>}/> 
 
     </Routes>
 

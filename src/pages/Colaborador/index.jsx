@@ -113,7 +113,7 @@ export default function Colaborador() {
   return (
     <Box>
       <Box display="flex" alignItems="center" justifyContent="space-between">
-        <Heading>colaborador</Heading>
+        <Heading>Colaborador</Heading>
         <Button onClick={() => navigate('/colaborador/adicionar')}>
           Adicionar colaborador
         </Button>

@@ -1,10 +1,16 @@
 import {
+  AspectRatio,
+  Box,
   Button,
+  Container,
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Heading,
   Input,
   Select,
+  Stack,
+  Text,
   useToast,
 } from "@chakra-ui/react";
 import { useCallback, useEffect, useState } from "react";
@@ -12,23 +18,71 @@ import useErrors from "../../../hooks/useErrors";
 import { onlyNumbers } from "../../../utils/onlyNumbers";
 import { httpClient } from "../../../services/HttpClient";
 import { AxiosError } from "axios";
-import  formatValor from "../../../utils/formatValor";
+import  {formatValor} from "../../../utils/formatValor";
+import { motion, useAnimation } from "framer-motion";
+import { PreviewImage } from "./PreviewImage";
 
+import flowerImage from '../../../assets/images/flower.png';
 
+const flowerImageAnimation = {
+  rest: {
+    scale: 1.1,
+    filter: "grayscale(80%)",
+    transition: {
+      duration: 0.5,
+      type: "tween",
+      ease: "easeIn"
+    }
+  },
+  hover: {
+    scale: 1.3,
+    filter: "grayscale(0%)",
+    transition: {
+      duration: 0.4,
+      type: "tween",
+      ease: "easeOut"
+    }
+  }
+};
+
+const imageAnimation = {
+  rest: {
+    scale: 1,
+    filter: "grayscale(0%)",
+    transition: {
+      duration: 0.5,
+      type: "tween",
+      ease: "easeIn"
+    }
+  },
+  hover: {
+    scale: 1.1,
+    filter: "grayscale(0%)",
+    transition: {
+      duration: 0.4,
+      type: "tween",
+      ease: "easeOut"
+    }
+  }
+}
 
 export function ProdutoForm({ onSubmit, produto = undefined }) {
   const [nome, setNome] = useState(produto?.nome || "");
   const [valor, setValor] = useState(produto?.valor ? formatValor(produto.valor) : "");
   const [estoque, setEstoque] = useState(produto?.estoque ? produto.estoque : "");
   const [imagem, setImagem] = useState(produto?.imagem || "");
+  const [preview, setPreview] = useState(undefined);
   // fornecedor
   const [fornecedor_id, setFornecedor] = useState(produto?.fornecedor_id || "");
   const [isSubmiting, setIsSubmiting] = useState(false);
   // fornecedor
   const [fornecedores, setFornecedores] = useState([]);
 
-
   const toast = useToast();
+  
+  const controls = useAnimation();
+  const startAnimation = () => controls.start("hover");
+  const stopAnimation = () => controls.stop();
 
   const {
     setError,
@@ -79,11 +133,6 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
         return;
       }
 
-      if (onlyNumbers(e.target.value)) {
-        setError({ field: "valor", message: "Valor inválido!" });
-        return;
-      }
-
       removeError("valor");
     },
     [setError, removeError]
@@ -95,11 +144,6 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
 
       if (!e.target.value) {
         setError({ field: "estoque", message: "Estoque é obrigatório!" });
-        return;
-      }
-
-      if ((e.target.value)) {
-        setError({ field: "estoque", message: "Estoque inválido!" });
         return;
       }
 
@@ -126,23 +170,10 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
 
   const handleImagemChange = useCallback(
     (e) => {
-      setImagem(e.target.value);
-
-      if (!e.target.value) {
-        setError({ field: 'imagem', message: 'Imagem é obrigatório!' });
-        return;
-      }
-
-      if (e.target.value) {
-        setError({ field: 'imagem', message: 'Imagem inválida!' });
-        return;
-      }
-
-      removeError('imagem');
+      setImagem(e.target.files[0]);
     },
     [setError, removeError]
   );
-
  
   useEffect(() => {
     async function loadFornecedores() {
@@ -170,6 +201,20 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
 
   const isFormValid = nome && valor && estoque && imagem && fornecedor_id  && errors.length === 0;
 
+  useEffect(() => {
+    if (!imagem) {
+      setPreview(undefined);
+      return;
+    }
+
+    const url = URL.createObjectURL(imagem);
+    setPreview(url);
+
+    return () => {
+      URL.revokeObjectURL(url);
+    }
+  }, [imagem]);
+
   return (
     <form onSubmit={handleSubmit}>
       <FormControl isInvalid={Boolean(getErrorMessageByFieldName("nome"))}>
@@ -188,14 +233,13 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
         )}
       </FormControl>
 
-
       <FormControl
         marginTop={4}
         isInvalid={Boolean(getErrorMessageByFieldName("valor"))}
       >
         <FormLabel>Valor</FormLabel>
         <Input
-          type="number"
+          type="text"
           name="valor"
           value={valor}
           onChange={handleValorChange}
@@ -214,7 +258,7 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
       >
         <FormLabel>Estoque</FormLabel>
         <Input
-          type="number"
+          type="text"
           name="estoque"
           value={estoque}
           onChange={handleEstoqueChange}
@@ -232,7 +276,7 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
         marginTop={4}
         isInvalid={Boolean(getErrorMessageByFieldName("fornecedor"))}
       >
-        <FormLabel>Função</FormLabel>
+        <FormLabel>Fornecedor</FormLabel>
         {/* fornecedor */}
         <Select
           placeholder="Selecione o fornecedor"
@@ -252,25 +296,80 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
         )}
       </FormControl>
 
-
-      <FormControl
-        marginTop={4}
-        isInvalid={Boolean(getErrorMessageByFieldName('imagem'))}
-      >
-        <FormLabel>Imagem</FormLabel>
-        <Input
-          type="imagem"
-          name="imagem"
-          value={imagem}
-          onChange={handleImagemChange}
-          
-        />
-        {Boolean(getErrorMessageByFieldName('imagem')) && (
-          <FormErrorMessage>
-            {getErrorMessageByFieldName('imagem')}
-          </FormErrorMessage>
-        )}
-      </FormControl>
+      <Container my="12">
+      <AspectRatio width="64" ratio={1}>
+        <Box
+          borderColor="gray.300"
+          borderStyle="dashed"
+          borderWidth="2px"
+          rounded="md"
+          shadow="sm"
+          role="group"
+          transition="all 150ms ease-in-out"
+          _hover={{
+            shadow: "md"
+          }}
+          as={motion.div}
+          initial="rest"
+          animate="rest"
+          whileHover="hover"
+        >
+          <Box position="relative" height="100%" width="100%">
+            <Box
+              position="absolute"
+              top="0"
+              left="0"
+              height="100%"
+              width="100%"
+              display="flex"
+              flexDirection="column"
+            >
+              <Stack
+                height="100%"
+                width="100%"
+                display="flex"
+                alignItems="center"
+                justify="center"
+                spacing="4"
+              >
+                <Box height={!preview ? "16" : '100%'} width={!preview ? "12" : '100%'} position="relative">
+                  <PreviewImage
+                    variants={!preview ? flowerImageAnimation : imageAnimation}
+                    backgroundImage={preview || flowerImage}  
+                  />
+                </Box>
+                {
+                  !preview && (
+                    <Stack p="8" textAlign="center" spacing="1">
+                      <Heading fontSize="lg" color="gray.700" fontWeight="bold">
+                        Arraste uma imagem aqui
+                      </Heading>
+                      <Text fontWeight="light">ou clique para selecionar</Text>
+                    </Stack>
+                  )
+                }
+                
+              </Stack>
+            </Box>
+            <Input
+              type="file"
+              height="100%"
+              width="100%"
+              position="absolute"
+              top="0"
+              left="0"
+              opacity="0"
+              aria-hidden="true"
+              accept="image/*"
+              multiple={false}
+              onDragEnter={startAnimation}
+              onDragLeave={stopAnimation}
+              onChange={handleImagemChange}
+            />
+          </Box>
+        </Box>
+      </AspectRatio>
+    </Container>
 
         <Button
           width="full"

@@ -11,7 +11,15 @@ export default function NewProduto() {
   const handleSubmit = useCallback(
     async (produto) => {
       try {
-        await httpClient.post('/produtos', produto);
+        const formData = new FormData();
+
+        Object.entries(produto).forEach(([name, value]) => {
+          formData.append(name, value);
+        })
+
+        await httpClient.post('/produtos', produto, {
+          headers: { "Content-Type": 'multipart/form-data' }
+        });
         toast({
             title: 'Produto cadastrado com sucesso!',
             status: 'success',
@@ -21,6 +29,7 @@ export default function NewProduto() {
           });
         navigate('/produtos');
       } catch (err) {
+          console.log(err);
           toast({
               title: 'Erro ao cadastrar produto!',
               status: 'error',

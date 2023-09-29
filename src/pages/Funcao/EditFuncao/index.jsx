@@ -72,7 +72,7 @@ export default function EditFuncao() {
 
   return (
     <Box>
-      <Heading marginBottom={8}>Editar Funcao</Heading>
+      <Heading marginBottom={8}>Editar função</Heading>
         <FuncaoForm
           onSubmit={handleSubmit}
           funcao={funcao}

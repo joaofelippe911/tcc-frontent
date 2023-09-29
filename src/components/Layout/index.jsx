@@ -26,8 +26,8 @@ import logo from './logo/logo.png';
 const LinkItems = [
   { name: 'Home', icon: FiHome, path: '/' },
   { name: 'Clientes', icon: FiUsers, path: '/clientes' },
-  { name: 'Colaborador', icon: FiUsers, path: '/colaborador' },
-  { name: 'Funcao', icon: FiUsers, path: '/funcao' },
+  { name: 'Colaboradores', icon: FiUsers, path: '/colaborador' },
+  { name: 'Função', icon: FiUsers, path: '/funcao' },
   { name: 'Fornecedores', icon: FiUsers, path: '/fornecedores' },
   { name: 'Produtos', icon: FiUsers, path: '/produtos' },
 ];

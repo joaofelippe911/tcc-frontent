@@ -5,7 +5,6 @@ function Home() {
   return (
     <Center>
       <Box>
-      <Heading style={{ marginBottom: '10px' }}>Florália Garden</Heading>
       
         <Image
           src={logo} 

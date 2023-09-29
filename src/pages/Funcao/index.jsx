@@ -110,7 +110,7 @@ export default function Funcao() {
   return (
     <Box>
       <Box display="flex" alignItems="center" justifyContent="space-between">
-        <Heading>Funcao</Heading>
+        <Heading>Funções</Heading>
         <Button onClick={() => navigate('/funcao/adicionar')}>
           Adicionar Função
         </Button>

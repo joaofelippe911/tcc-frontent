@@ -29,7 +29,7 @@ export default function Router() {
 
       <Route path="/colaborador" element={<Colaborador />} />
       <Route path="/colaborador/adicionar" element={<NewColaborador />} />
-      <Route path="/colaborasdor/editar/:id" element={<EditColaborador />}/> 
+      <Route path="/colaborador/editar/:id" element={<EditColaborador />}/> 
 
       <Route path="/funcao" element={<Funcao />} />
       <Route path="/funcao/adicionar" element={<NewFuncao/>} />

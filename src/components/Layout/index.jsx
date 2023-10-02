@@ -2,7 +2,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import {
   IconButton,
-  Avatar,
   Box,
   CloseButton,
   Flex,
@@ -19,15 +18,16 @@ import {
   MenuItem,
   MenuList,
 } from '@chakra-ui/react';
-import { FiHome, FiMenu, FiBell, FiChevronDown, FiUsers } from 'react-icons/fi';
-import Routes from '../../Routes';
-import logo from './logo/logo.png';
+import { FiHome, FiMenu, FiChevronDown, FiUsers } from 'react-icons/fi';
+import logo from '../../assets/images/logo.png';
+import AppRoutes from '../../routes/AppRoutes';
+import { useAuthContext } from '../../contexts/AuthContext';
 
 const LinkItems = [
   { name: 'Home', icon: FiHome, path: '/' },
   { name: 'Clientes', icon: FiUsers, path: '/clientes' },
   { name: 'Colaboradores', icon: FiUsers, path: '/colaborador' },
-  { name: 'Função', icon: FiUsers, path: '/funcao' },
+  { name: 'Funções', icon: FiUsers, path: '/funcao' },
   { name: 'Fornecedores', icon: FiUsers, path: '/fornecedores' },
   { name: 'Produtos', icon: FiUsers, path: '/produtos' },
 ];
@@ -101,6 +101,8 @@ const NavItem = ({ icon, path, children, ...rest }) => {
 };
 
 const MobileNav = ({ onOpen, ...rest }) => {
+  const { user, signOut } = useAuthContext();
+
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -132,17 +134,6 @@ const MobileNav = ({ onOpen, ...rest }) => {
       </Text>
 
       <HStack spacing={{ base: '0', md: '6' }}>
-        <IconButton
-          size="lg"
-          variant="ghost"
-          aria-label="open menu"
-          color="whiteAlpha.700"
-          _hover={{
-            bg: 'whiteAlpha.200',
-            color: 'white',
-          }}
-          icon={<FiBell />}
-        />
         <Flex alignItems={'center'}>
           <Menu>
             <MenuButton
@@ -151,21 +142,15 @@ const MobileNav = ({ onOpen, ...rest }) => {
               _focus={{ boxShadow: 'none' }}
             >
               <HStack>
-                <Avatar
-                  size={'sm'}
-                  src={
-                    'https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'
-                  }
-                />
                 <VStack
                   display={{ base: 'none', md: 'flex' }}
                   alignItems="flex-start"
                   spacing="1px"
                   ml="2"
                 >
-                  <Text fontSize="sm">Sebastiana Santana</Text>
+                  <Text fontSize="sm">{user.nome}</Text>
                   <Text fontSize="xs" color="whiteAlpha.700">
-                    Admin
+                    {user.funcao.nome}
                   </Text>
                 </VStack>
                 <Box display={{ base: 'none', md: 'flex' }}>
@@ -178,7 +163,12 @@ const MobileNav = ({ onOpen, ...rest }) => {
               borderColor={useColorModeValue('blackAlpha.200', 'gray.700')}
             >
               {/* <MenuDivider /> */}
-              <MenuItem bg={'gray.900'}>Sair</MenuItem>
+              <MenuItem
+                bg={'gray.900'}
+                onClick={signOut}
+              >
+                Sair
+              </MenuItem>
             </MenuList>
           </Menu>
         </Flex>
@@ -217,7 +207,7 @@ const Layout = () => {
         }}
         p="4"
       >
-        <Routes />
+        <AppRoutes />
       </Box>
     </Box>
   );

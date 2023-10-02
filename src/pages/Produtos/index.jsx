@@ -118,7 +118,7 @@ export default function Produtos() {
       </Box>
       <TableContainer marginTop={16}>
         <Table variant="simple">
-          <TableCaption>Produtos Cadastrados</TableCaption>
+          <TableCaption>Produtos cadastrados</TableCaption>
           <Thead>
             <Tr>
               <Th>Nome</Th>

@@ -91,7 +91,7 @@ export default function Funcao() {
         }
 
         toast({
-          title: 'Erro ao buscar Funcao!',
+          title: err.response.data.message || 'Erro ao buscar funções!',
           status: 'error',
           duration: 10000,
           isClosable: true,

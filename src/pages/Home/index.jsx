@@ -1,5 +1,5 @@
-import { Box, Image, Center, Heading } from '@chakra-ui/react';
-import logo from './logo/logo.png';
+import { Box, Image, Center } from '@chakra-ui/react';
+import logo from '../../assets/images/logo.png';
 
 function Home() {
   return (

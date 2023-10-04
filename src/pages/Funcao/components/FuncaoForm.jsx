@@ -8,12 +8,14 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import useErrors from '../../../hooks/useErrors';
 import { httpClient } from '../../../services/HttpClient';
+import { Select } from 'chakra-react-select';
 
 export function FuncaoForm({ onSubmit, funcao = undefined }) {
   const [isSubmiting, setIsSubmiting] = useState(false);
   const [nome, setNome] = useState(funcao?.nome || '');
+  const [permissoes, setPermissoes] = useState(funcao?.permissoes ? funcao?.permissoes.map((permissao) => ({ label: permissao.descricao, value: permissao.id })) : []);
   const [isLoadingPermissoes, setIsLoadingPermissoes] = useState(false);
-  const [permissoes, setPermissoes] = useState([]);
+  const [allPermissoes, setAllPermissoes] = useState([]);
 
   const { setError, removeError, errors, getErrorMessageByFieldName } =
     useErrors();
@@ -26,11 +28,12 @@ export function FuncaoForm({ onSubmit, funcao = undefined }) {
 
       await onSubmit({
         nome,
+        permissoes: permissoes.map((p) => p.value)
       });
 
       setIsSubmiting(false);
     },
-    [onSubmit, nome]
+    [onSubmit, nome, permissoes]
   );
 
   const handleNomeChange = useCallback(
@@ -47,18 +50,22 @@ export function FuncaoForm({ onSubmit, funcao = undefined }) {
     [setError, removeError]
   );
 
+  const handlePermissoesChange = useCallback((e) => {
+    setPermissoes(e);
+  }, []);
+
   useEffect(() => {
     const controller = new AbortController();
     async function loadPermissoes() {
       try {
         setIsLoadingPermissoes(true);
 
-        const { data } = await httpClient.get('/permissoes', { signal: controller.signal });
+        const { data } = await httpClient.get('/permissoes', {
+          signal: controller.signal,
+        });
 
-        setPermissoes(data);
-
+        setAllPermissoes(data);
       } catch (error) {
-
       } finally {
         setIsLoadingPermissoes(false);
       }
@@ -68,11 +75,10 @@ export function FuncaoForm({ onSubmit, funcao = undefined }) {
 
     return () => {
       controller.abort();
-    }
+    };
   }, []);
-  
-  const isFormValid =
-    nome && errors.length === 0;
+
+  const isFormValid = nome && errors.length === 0;
 
   return (
     <form onSubmit={handleSubmit}>
@@ -84,6 +90,30 @@ export function FuncaoForm({ onSubmit, funcao = undefined }) {
           value={nome}
           onChange={handleNomeChange}
           placeholder="Digite o nome da função"
+        />
+        {Boolean(getErrorMessageByFieldName('nome')) && (
+          <FormErrorMessage>
+            {getErrorMessageByFieldName('nome')}
+          </FormErrorMessage>
+        )}
+      </FormControl>
+
+      <FormControl
+        marginTop={4}
+        isInvalid={Boolean(getErrorMessageByFieldName('nome'))}
+      >
+        <FormLabel>Permissões</FormLabel>
+        <Select
+          isMulti
+          isLoading={isLoadingPermissoes}
+          closeMenuOnSelect={false}
+          value={permissoes}
+          onChange={handlePermissoesChange}
+          options={allPermissoes.map((permissao) => ({
+            label: permissao.descricao,
+            value: permissao.id,
+          }))}
+          placeholder="Selecione as permissões"
         />
         {Boolean(getErrorMessageByFieldName('nome')) && (
           <FormErrorMessage>
@@ -104,5 +134,3 @@ export function FuncaoForm({ onSubmit, funcao = undefined }) {
     </form>
   );
 }
-
- 

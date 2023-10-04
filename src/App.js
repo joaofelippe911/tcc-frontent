@@ -10,7 +10,16 @@ const config = {
   useSystemColorMode: false,
 };
 
-const theme = extendTheme({ config });
+const theme = extendTheme({
+  config,
+  components: {
+    Input: {
+      defaultProps: {
+        focusBorderColor: '#ED64A6',
+      }
+    }
+  }
+});
 
 function App() {
   return (

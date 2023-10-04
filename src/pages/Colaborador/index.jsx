@@ -22,8 +22,10 @@ import formatPhone from '../../utils/formatPhone';
 import { formatCpf } from '../../utils/formatCpf';
 import { AxiosError } from 'axios';
 import Modal from '../../components/Modal';
+import Spinner from '../../components/Spinner';
 
 export default function Colaborador() {
+  const [isLoading, setIsLoading] = useState(false);
   const [colaborador, setColaborador] = useState([]);
   const [isDeleteColaboradorModalVisible, setIsDeleteColaboradorModalVisible] =
     useState(false);
@@ -49,7 +51,9 @@ export default function Colaborador() {
       await httpClient.delete(`/colaboradores/${colaboradorBeingDeleted?.id}`);
 
       setColaborador((prevState) =>
-        prevState.filter((colaborador) => colaborador.id !== colaboradorBeingDeleted?.id)
+        prevState.filter(
+          (colaborador) => colaborador.id !== colaboradorBeingDeleted?.id
+        )
       );
 
       setIsDeleteColaboradorModalVisible(false);
@@ -83,6 +87,7 @@ export default function Colaborador() {
 
     async function loadColaboradores() {
       try {
+        setIsLoading(true);
         const { data } = await httpClient.get('/colaboradores', {
           signal: controller.signal,
         });
@@ -100,6 +105,8 @@ export default function Colaborador() {
           isClosable: true,
           position: 'top-right',
         });
+      } finally {
+        setIsLoading(false);
       }
     }
 
@@ -111,63 +118,70 @@ export default function Colaborador() {
   }, [toast]);
 
   return (
-    <Box>
-      <Box display="flex" alignItems="center" justifyContent="space-between">
-        <Heading>Colaboradores</Heading>
-        <Button onClick={() => navigate('/colaborador/adicionar')}>
-          Adicionar colaborador
-        </Button>
-      </Box>
-      <TableContainer marginTop={16}>
-        <Table variant="simple">
-          <TableCaption>Colaboradores cadastrados</TableCaption>
-          <Thead>
-            <Tr>
-              <Th>Nome</Th>
-              <Th>Email</Th>
-              <Th>CPF</Th>
-              <Th>Telefone</Th>
-              <Th>Ações</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {colaborador.map((colaborador) => (
-              <Tr key={colaborador.id}>
-                <Td>{colaborador.nome}</Td>
-                <Td>{colaborador.email}</Td>
-                <Td>{formatCpf(colaborador.cpf)}</Td>
-                <Td>{formatPhone(colaborador.telefone)}</Td>
-                <Td>
-                  <Flex>
-                    <FiEdit
-                      fontSize={20}
-                      color="#ED64A6"
-                      cursor="pointer"
-                      onClick={() => handleClickEditColaborador(colaborador.id)}
-                      style={{
-                        marginRight: 8,
-                      }}
-                    />
-                    <FiTrash
-                      fontSize={20}
-                      color="#FC5050"
-                      cursor="pointer"
-                      onClick={() => handleClickDeleteColaborador(colaborador)}
-                    />
-                  </Flex>
-                </Td>
+    <Box position="relative">
+      <Spinner spinning={isLoading} />
+      <Box p={4}>
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          <Heading>Colaboradores</Heading>
+          <Button onClick={() => navigate('/colaborador/adicionar')}>
+            Adicionar colaborador
+          </Button>
+        </Box>
+        <TableContainer marginTop={16}>
+          <Table variant="simple">
+            <TableCaption>Colaboradores cadastrados</TableCaption>
+            <Thead>
+              <Tr>
+                <Th>Nome</Th>
+                <Th>Email</Th>
+                <Th>CPF</Th>
+                <Th>Telefone</Th>
+                <Th>Ações</Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
-      <Modal
-        open={isDeleteColaboradorModalVisible}
-        title={`Deseja realmente deletar "${colaboradorBeingDeleted?.nome}"`}
-        onConfirm={handleConfirmDeleteColaborador}
-        confirmText="Deletar"
-        onCancel={handleClickCancelDeleteColaborador}
-      />
+            </Thead>
+            <Tbody>
+              {colaborador.map((colaborador) => (
+                <Tr key={colaborador.id}>
+                  <Td>{colaborador.nome}</Td>
+                  <Td>{colaborador.email}</Td>
+                  <Td>{formatCpf(colaborador.cpf)}</Td>
+                  <Td>{formatPhone(colaborador.telefone)}</Td>
+                  <Td>
+                    <Flex>
+                      <FiEdit
+                        fontSize={20}
+                        color="#ED64A6"
+                        cursor="pointer"
+                        onClick={() =>
+                          handleClickEditColaborador(colaborador.id)
+                        }
+                        style={{
+                          marginRight: 8,
+                        }}
+                      />
+                      <FiTrash
+                        fontSize={20}
+                        color="#FC5050"
+                        cursor="pointer"
+                        onClick={() =>
+                          handleClickDeleteColaborador(colaborador)
+                        }
+                      />
+                    </Flex>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
+        <Modal
+          open={isDeleteColaboradorModalVisible}
+          title={`Deseja realmente deletar "${colaboradorBeingDeleted?.nome}"`}
+          onConfirm={handleConfirmDeleteColaborador}
+          confirmText="Deletar"
+          onCancel={handleClickCancelDeleteColaborador}
+        />
+      </Box>
     </Box>
   );
 }

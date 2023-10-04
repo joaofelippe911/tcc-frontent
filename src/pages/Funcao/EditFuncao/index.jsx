@@ -4,8 +4,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { httpClient } from '../../../services/HttpClient';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AxiosError } from 'axios';
+import Spinner from '../../../components/Spinner';
 
 export default function EditFuncao() {
+  const [isLoading, setIsLoading] = useState(false);
   const [funcao, setFuncao] = useState();
 
   const navigate = useNavigate();
@@ -17,6 +19,7 @@ export default function EditFuncao() {
 
     async function loadFuncao() {
       try {
+        setIsLoading(true);
         const { data } = await httpClient.get(`/funcoes/${id}`, {
           signal: controller.signal,
         });
@@ -35,6 +38,8 @@ export default function EditFuncao() {
           position: 'top-right',
         });
         navigate('/funcao');
+      } finally {
+        setIsLoading(false);
       }
     }
 
@@ -71,13 +76,12 @@ export default function EditFuncao() {
   );
 
   return (
-    <Box>
-      <Heading marginBottom={8}>Editar função</Heading>
-        <FuncaoForm
-          onSubmit={handleSubmit}
-          funcao={funcao}
-          key={funcao?.id}
-        />
-   </Box>
+    <Box position="relative">
+      <Spinner spinning={isLoading} />
+      <Box p={4}>
+        <Heading marginBottom={8}>Editar função</Heading>
+        <FuncaoForm onSubmit={handleSubmit} funcao={funcao} key={funcao?.id} />
+      </Box>
+    </Box>
   );
 }

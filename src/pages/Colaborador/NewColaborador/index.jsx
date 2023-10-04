@@ -13,28 +13,28 @@ export default function NewColaborador() {
       try {
         await httpClient.post('/colaboradores', colaborador);
         toast({
-            title: 'Colaborador cadastrado com sucesso!',
-            status: 'success',
-            duration: 5000,
-            isClosable: true,
-            position: 'top-right'
-          });
+          title: 'Colaborador cadastrado com sucesso!',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
         navigate('/colaborador');
       } catch (err) {
-          toast({
-              title: 'Erro ao cadastrar colaborador!',
-              status: 'error',
-              duration: 10000,
-              isClosable: true,
-              position: 'top-right'
-            });
+        toast({
+          title: 'Erro ao cadastrar colaborador!',
+          status: 'error',
+          duration: 10000,
+          isClosable: true,
+          position: 'top-right',
+        });
       }
     },
     [navigate, toast]
   );
 
   return (
-    <Box>
+    <Box p={4}>
       <Heading marginBottom={8}>Adicionar Colaborador</Heading>
       <ColaboradorForm onSubmit={handleSubmit} />
     </Box>

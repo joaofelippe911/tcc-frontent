@@ -5,12 +5,15 @@ import {
   FormLabel,
   Input,
 } from '@chakra-ui/react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import useErrors from '../../../hooks/useErrors';
+import { httpClient } from '../../../services/HttpClient';
 
 export function FuncaoForm({ onSubmit, funcao = undefined }) {
-  const [nome, setNome] = useState(funcao?.nome || '');
   const [isSubmiting, setIsSubmiting] = useState(false);
+  const [nome, setNome] = useState(funcao?.nome || '');
+  const [isLoadingPermissoes, setIsLoadingPermissoes] = useState(false);
+  const [permissoes, setPermissoes] = useState([]);
 
   const { setError, removeError, errors, getErrorMessageByFieldName } =
     useErrors();
@@ -44,6 +47,29 @@ export function FuncaoForm({ onSubmit, funcao = undefined }) {
     [setError, removeError]
   );
 
+  useEffect(() => {
+    const controller = new AbortController();
+    async function loadPermissoes() {
+      try {
+        setIsLoadingPermissoes(true);
+
+        const { data } = await httpClient.get('/permissoes', { signal: controller.signal });
+
+        setPermissoes(data);
+
+      } catch (error) {
+
+      } finally {
+        setIsLoadingPermissoes(false);
+      }
+    }
+
+    loadPermissoes();
+
+    return () => {
+      controller.abort();
+    }
+  }, []);
   
   const isFormValid =
     nome && errors.length === 0;

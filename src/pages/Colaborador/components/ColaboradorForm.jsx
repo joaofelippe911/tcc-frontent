@@ -163,7 +163,6 @@ export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
     [setError, removeError]
   );
 
-
   useEffect(() => {
     async function loadFuncoes() {
       try {
@@ -186,7 +185,7 @@ export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
     }
 
     loadFuncoes();
-  }, []);
+  }, [toast]);
 
   const isFormValid = nome && cpf && telefone && funcao_id && email && password && errors.length === 0;
 

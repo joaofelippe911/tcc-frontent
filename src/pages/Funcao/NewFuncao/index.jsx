@@ -13,28 +13,28 @@ export default function NewFuncao() {
       try {
         await httpClient.post('/funcoes', funcao);
         toast({
-            title: 'Funcao cadastrado com sucesso!',
-            status: 'success',
-            duration: 5000,
-            isClosable: true,
-            position: 'top-right'
-          });
+          title: 'Funcao cadastrado com sucesso!',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
         navigate('/funcao');
       } catch (err) {
-          toast({
-              title: 'Erro ao cadastrar funcao!',
-              status: 'error',
-              duration: 10000,
-              isClosable: true,
-              position: 'top-right'
-            });
+        toast({
+          title: 'Erro ao cadastrar funcao!',
+          status: 'error',
+          duration: 10000,
+          isClosable: true,
+          position: 'top-right',
+        });
       }
     },
     [navigate, toast]
   );
 
   return (
-    <Box>
+    <Box p={4}>
       <Heading marginBottom={8}>Adicionar função</Heading>
       <FuncaoForm onSubmit={handleSubmit} />
     </Box>

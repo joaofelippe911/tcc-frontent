@@ -20,9 +20,11 @@ import { FiEdit, FiTrash } from 'react-icons/fi';
 import { httpClient } from '../../services/HttpClient';
 import { AxiosError } from 'axios';
 import Modal from '../../components/Modal';
+import Spinner from '../../components/Spinner';
 
 export default function Funcao() {
-  const [funcao, setFuncao] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [funcoes, setFuncoes] = useState([]);
   const [isDeleteFuncaoModalVisible, setIsDeleteFuncaoModalVisible] =
     useState(false);
   const [funcaoBeingDeleted, setFuncaoBeingDelete] = useState();
@@ -46,14 +48,15 @@ export default function Funcao() {
     try {
       await httpClient.delete(`/funcoes/${funcaoBeingDeleted?.id}`);
 
-      setFuncao((prevState) =>
-        prevState.filter((funcao) => funcao.id !== funcaoBeingDeleted?.id));
+      setFuncoes((prevState) =>
+        prevState.filter((funcao) => funcao.id !== funcaoBeingDeleted?.id)
+      );
 
       setIsDeleteFuncaoModalVisible(false);
       setFuncaoBeingDelete(undefined);
 
       toast({
-        title: 'Função deletado com sucesso!',
+        title: 'Função deletada com sucesso!',
         status: 'success',
         duration: 5000,
         isClosable: true,
@@ -71,20 +74,20 @@ export default function Funcao() {
   }, [funcaoBeingDeleted, toast]);
 
   const handleClickCancelDeleteFuncao = useCallback(() => {
-  
     setFuncaoBeingDelete(undefined);
   }, []);
 
   useEffect(() => {
     const controller = new AbortController();
 
-    async function loadFuncao() {
+    async function loadFuncoes() {
       try {
+        setIsLoading(true);
         const { data } = await httpClient.get('/funcoes', {
           signal: controller.signal,
         });
 
-        setFuncao(data);
+        setFuncoes(data);
       } catch (err) {
         if (err instanceof AxiosError && err.name === 'CanceledError') {
           return;
@@ -97,10 +100,12 @@ export default function Funcao() {
           isClosable: true,
           position: 'top-right',
         });
+      } finally{
+        setIsLoading(false);
       }
     }
 
-    loadFuncao();
+    loadFuncoes();
 
     return () => {
       controller.abort();
@@ -108,56 +113,59 @@ export default function Funcao() {
   }, [toast]);
 
   return (
-    <Box>
-      <Box display="flex" alignItems="center" justifyContent="space-between">
-        <Heading>Funções</Heading>
-        <Button onClick={() => navigate('/funcao/adicionar')}>
-          Adicionar Função
-        </Button>
-      </Box>
-      <TableContainer marginTop={16}>
-        <Table variant="simple">
-          <TableCaption>Funções cadastradas</TableCaption>
-          <Thead>
-            <Tr>
-              <Th>Nome</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {funcao.map((funcao) => (
-              <Tr key={funcao.id}>
-                <Td>{funcao.nome}</Td>
-                <Td>
-                  <Flex>
-                    <FiEdit
-                      fontSize={20}
-                      color="#ED64A6"
-                      cursor="pointer"
-                      onClick={() => handleClickEditFuncao(funcao.id)}
-                      style={{
-                        marginRight: 8,
-                      }}
-                    />
-                    <FiTrash
-                      fontSize={20}
-                      color="#FC5050"
-                      cursor="pointer"
-                      onClick={() => handleClickDeleteFuncao(funcao)}
-                    />
-                  </Flex>
-                </Td>
+    <Box position="relative">
+      <Spinner spinning={isLoading} />
+      <Box p={4}>
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          <Heading>Funções</Heading>
+          <Button onClick={() => navigate('/funcao/adicionar')}>
+            Adicionar Função
+          </Button>
+        </Box>
+        <TableContainer marginTop={16}>
+          <Table variant="simple">
+            <TableCaption>Funções cadastradas</TableCaption>
+            <Thead>
+              <Tr>
+                <Th>Nome</Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
-      <Modal
-      open={isDeleteFuncaoModalVisible}             
-        title={`Deseja realmente deletar "${funcaoBeingDeleted?.nome}"`}
-        onConfirm={handleConfirmDeleteFuncao}
-        confirmText="Deletar"
-        onCancel={handleClickCancelDeleteFuncao}
-      />
+            </Thead>
+            <Tbody>
+              {funcoes.map((funcao) => (
+                <Tr key={funcao.id}>
+                  <Td>{funcao.nome}</Td>
+                  <Td>
+                    <Flex>
+                      <FiEdit
+                        fontSize={20}
+                        color="#ED64A6"
+                        cursor="pointer"
+                        onClick={() => handleClickEditFuncao(funcao.id)}
+                        style={{
+                          marginRight: 8,
+                        }}
+                      />
+                      <FiTrash
+                        fontSize={20}
+                        color="#FC5050"
+                        cursor="pointer"
+                        onClick={() => handleClickDeleteFuncao(funcao)}
+                      />
+                    </Flex>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
+        <Modal
+          open={isDeleteFuncaoModalVisible}
+          title={`Deseja realmente deletar "${funcaoBeingDeleted?.nome}"`}
+          onConfirm={handleConfirmDeleteFuncao}
+          confirmText="Deletar"
+          onCancel={handleClickCancelDeleteFuncao}
+        />
+      </Box>
     </Box>
   );
 }

@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { httpClient } from '../services/HttpClient';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '@chakra-ui/react';
 
 const AuthContext = createContext();
 
@@ -10,6 +11,7 @@ export function AuthContextProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
+  const toast = useToast();
   
   const signIn = useCallback(async ({email, password}) => {
     try {
@@ -22,9 +24,15 @@ export function AuthContextProvider({ children }) {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
     } catch (error) {
-      console.log(error);
+      toast({
+        title: 'Credenciais inválidas',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'top-right',
+      });
     }
-  }, []);
+  }, [toast]);
 
   const signOut = useCallback(async () => {
     try {

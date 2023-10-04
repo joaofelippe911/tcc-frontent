@@ -4,8 +4,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { httpClient } from '../../../services/HttpClient';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AxiosError } from 'axios';
+import Spinner from '../../../components/Spinner';
 
 export default function EditColaborador() {
+  const [isLoading, setIsLoading] = useState(false);
   const [colaborador, setColaborador] = useState();
 
   const navigate = useNavigate();
@@ -17,7 +19,9 @@ export default function EditColaborador() {
 
     async function loadColaborador() {
       try {
-        const { data } = await httpClient.get(`/colaborador/${id}`, {
+        setIsLoading(true);
+
+        const { data } = await httpClient.get(`/colaboradores/${id}`, {
           signal: controller.signal,
         });
 
@@ -35,6 +39,8 @@ export default function EditColaborador() {
           position: 'top-right',
         });
         navigate('/colaborador');
+      } finally {
+        setIsLoading(false);
       }
     }
 
@@ -71,13 +77,16 @@ export default function EditColaborador() {
   );
 
   return (
-    <Box>
-      <Heading marginBottom={8}>Editar colaborador</Heading>
-      <ColaboradorForm
-        onSubmit={handleSubmit}
-        colaborador={colaborador}
-        key={colaborador?.id}
+    <Box position="relative">
+      <Spinner spinning={isLoading} />
+      <Box p={4}>
+        <Heading marginBottom={8}>Editar colaborador</Heading>
+        <ColaboradorForm
+          onSubmit={handleSubmit}
+          colaborador={colaborador}
+          key={colaborador?.id}
         />
+      </Box>
     </Box>
   );
 }

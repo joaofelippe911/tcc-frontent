@@ -205,7 +205,6 @@ const Layout = () => {
           base: 0,
           md: 60,
         }}
-        p="4"
       >
         <AppRoutes />
       </Box>

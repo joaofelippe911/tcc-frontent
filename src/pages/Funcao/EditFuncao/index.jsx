@@ -25,6 +25,7 @@ export default function EditFuncao() {
         });
 
         setFuncao(data);
+        setIsLoading(false);
       } catch (err) {
         if (err instanceof AxiosError && err.name === 'CanceledError') {
           return;
@@ -37,9 +38,9 @@ export default function EditFuncao() {
           isClosable: true,
           position: 'top-right',
         });
-        navigate('/funcao');
-      } finally {
+
         setIsLoading(false);
+        navigate('/funcao');
       }
     }
 
@@ -55,7 +56,7 @@ export default function EditFuncao() {
       try {
         await httpClient.patch(`/funcoes/${id}`, funcao);
         toast({
-          title: 'funcao editado com sucesso!',
+          title: 'Função editada com sucesso!',
           status: 'success',
           duration: 5000,
           isClosable: true,
@@ -64,7 +65,7 @@ export default function EditFuncao() {
         navigate('/funcao');
       } catch (err) {
         toast({
-          title: 'Erro ao editar funcao!',
+          title: 'Erro ao editar função!',
           status: 'error',
           duration: 10000,
           isClosable: true,

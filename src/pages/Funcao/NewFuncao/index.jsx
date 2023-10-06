@@ -13,7 +13,7 @@ export default function NewFuncao() {
       try {
         await httpClient.post('/funcoes', funcao);
         toast({
-          title: 'Funcao cadastrado com sucesso!',
+          title: 'Função cadastrada com sucesso!',
           status: 'success',
           duration: 5000,
           isClosable: true,
@@ -22,7 +22,7 @@ export default function NewFuncao() {
         navigate('/funcao');
       } catch (err) {
         toast({
-          title: 'Erro ao cadastrar funcao!',
+          title: 'Erro ao cadastrar funcão!',
           status: 'error',
           duration: 10000,
           isClosable: true,

@@ -9,6 +9,7 @@ import { useCallback, useEffect, useState } from 'react';
 import useErrors from '../../../hooks/useErrors';
 import { httpClient } from '../../../services/HttpClient';
 import { Select } from 'chakra-react-select';
+import { AxiosError } from 'axios';
 
 export function FuncaoForm({ onSubmit, funcao = undefined }) {
   const [isSubmiting, setIsSubmiting] = useState(false);
@@ -65,8 +66,12 @@ export function FuncaoForm({ onSubmit, funcao = undefined }) {
         });
 
         setAllPermissoes(data);
+        setIsLoadingPermissoes(false);
       } catch (error) {
-      } finally {
+        if (error instanceof AxiosError && error.name === 'CanceledError') {
+          return;
+        }
+
         setIsLoadingPermissoes(false);
       }
     }

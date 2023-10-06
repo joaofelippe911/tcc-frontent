@@ -88,6 +88,7 @@ export default function Funcao() {
         });
 
         setFuncoes(data);
+        setIsLoading(false);
       } catch (err) {
         if (err instanceof AxiosError && err.name === 'CanceledError') {
           return;
@@ -100,7 +101,6 @@ export default function Funcao() {
           isClosable: true,
           position: 'top-right',
         });
-      } finally{
         setIsLoading(false);
       }
     }
@@ -113,7 +113,9 @@ export default function Funcao() {
   }, [toast]);
 
   return (
-    <Box position="relative">
+    <Box
+      position="relative"
+    >
       <Spinner spinning={isLoading} />
       <Box p={4}>
         <Box display="flex" alignItems="center" justifyContent="space-between">

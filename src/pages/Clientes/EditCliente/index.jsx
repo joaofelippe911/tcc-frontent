@@ -4,8 +4,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { httpClient } from '../../../services/HttpClient';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AxiosError } from 'axios';
+import Spinner from '../../../components/Spinner';
 
 export default function EditCliente() {
+  const [isLoading, setIsLoading] = useState(false);
   const [cliente, setCliente] = useState();
 
   const navigate = useNavigate();
@@ -17,16 +19,19 @@ export default function EditCliente() {
 
     async function loadCliente() {
       try {
+        setIsLoading(true);
         const { data } = await httpClient.get(`/clientes/${id}`, {
           signal: controller.signal,
         });
 
         setCliente(data);
+        setIsLoading(false);
       } catch (err) {
         if (err instanceof AxiosError && err.name === 'CanceledError') {
           return;
         }
-
+        
+        setIsLoading(false);
         toast({
           title: 'Erro ao buscar dados do cliente!',
           status: 'error',
@@ -71,13 +76,16 @@ export default function EditCliente() {
   );
 
   return (
-    <Box>
-      <Heading marginBottom={8}>Editar cliente</Heading>
-      <ClienteForm
-        onSubmit={handleSubmit}
-        cliente={cliente}
-        key={cliente?.id}
-      />
+    <Box position="relative">
+      <Spinner spinning={isLoading} />
+      <Box p={4}>
+        <Heading marginBottom={8}>Editar cliente</Heading>
+        <ClienteForm
+          onSubmit={handleSubmit}
+          cliente={cliente}
+          key={cliente?.id}
+        />
+      </Box>
     </Box>
   );
 }

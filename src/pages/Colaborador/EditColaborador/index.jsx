@@ -26,11 +26,13 @@ export default function EditColaborador() {
         });
 
         setColaborador(data);
+        setIsLoading(false);
       } catch (err) {
         if (err instanceof AxiosError && err.name === 'CanceledError') {
           return;
         }
 
+        setIsLoading(false);
         toast({
           title: 'Erro ao buscar dados do colaborador!',
           status: 'error',
@@ -39,8 +41,6 @@ export default function EditColaborador() {
           position: 'top-right',
         });
         navigate('/colaborador');
-      } finally {
-        setIsLoading(false);
       }
     }
 

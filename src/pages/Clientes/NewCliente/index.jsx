@@ -34,7 +34,7 @@ export default function NewCliente() {
   );
 
   return (
-    <Box>
+    <Box p={4}>
       <Heading marginBottom={8}>Adicionar cliente</Heading>
       <ClienteForm onSubmit={handleSubmit} />
     </Box>

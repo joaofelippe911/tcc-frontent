@@ -9,7 +9,14 @@ import {
 } from '@chakra-ui/react';
 
 export default function Modal({
-  open, title, onCancel, onConfirm, cancelText = "Cancelar", confirmText = "Confirmar"
+  open,
+  title,
+  onCancel,
+  onConfirm,
+  cancelText = "Cancelar",
+  confirmText = "Confirmar",
+  isSubmiting = false,
+  isLoading = false,
 }) {
   return (
     <ChakraModal isOpen={open} onClose={onCancel} autoFocus={false} >
@@ -23,6 +30,7 @@ export default function Modal({
             variant="ghost"
             mr={3}
             onClick={onCancel}
+            disabled={isSubmiting || isLoading}
           >
             {cancelText}
           </Button>
@@ -30,6 +38,8 @@ export default function Modal({
           <Button
             colorScheme="red"
             onClick={onConfirm}
+            isDisabled={isSubmiting || isLoading}
+            isLoading={isSubmiting}
           >
             {confirmText}
           </Button>

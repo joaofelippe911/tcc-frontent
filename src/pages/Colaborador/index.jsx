@@ -93,11 +93,13 @@ export default function Colaborador() {
         });
 
         setColaborador(data);
+        setIsLoading(false);
       } catch (err) {
         if (err instanceof AxiosError && err.name === 'CanceledError') {
           return;
         }
 
+        setIsLoading(false);
         toast({
           title: 'Erro ao buscar os colaborador!',
           status: 'error',
@@ -105,8 +107,6 @@ export default function Colaborador() {
           isClosable: true,
           position: 'top-right',
         });
-      } finally {
-        setIsLoading(false);
       }
     }
 

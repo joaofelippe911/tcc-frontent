@@ -30,13 +30,14 @@ export default function Colaborador() {
   const [isDeleteColaboradorModalVisible, setIsDeleteColaboradorModalVisible] =
     useState(false);
   const [colaboradorBeingDeleted, setColaboradorBeingDelete] = useState();
+  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
 
   const navigate = useNavigate();
   const toast = useToast();
 
   const handleClickEditColaborador = useCallback(
     (id) => {
-      navigate(`/colaborador/editar/${id}`);
+      navigate(`/colaboradores/editar/${id}`);
     },
     [navigate]
   );
@@ -48,6 +49,7 @@ export default function Colaborador() {
 
   const handleConfirmDeleteColaborador = useCallback(async () => {
     try {
+      setIsLoadingDelete(true);
       await httpClient.delete(`/colaboradores/${colaboradorBeingDeleted?.id}`);
 
       setColaborador((prevState) =>
@@ -58,6 +60,7 @@ export default function Colaborador() {
 
       setIsDeleteColaboradorModalVisible(false);
       setColaboradorBeingDelete(undefined);
+      setIsLoadingDelete(false);
 
       toast({
         title: 'colaborador deletado com sucesso!',
@@ -67,6 +70,8 @@ export default function Colaborador() {
         position: 'top-right',
       });
     } catch (err) {
+      setIsLoadingDelete(false);
+
       toast({
         title: 'Erro ao deletar colaborador!',
         status: 'error',
@@ -123,7 +128,7 @@ export default function Colaborador() {
       <Box p={4}>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Heading>Colaboradores</Heading>
-          <Button onClick={() => navigate('/colaborador/adicionar')}>
+          <Button onClick={() => navigate('/colaboradores/adicionar')}>
             Adicionar colaborador
           </Button>
         </Box>
@@ -180,6 +185,7 @@ export default function Colaborador() {
           onConfirm={handleConfirmDeleteColaborador}
           confirmText="Deletar"
           onCancel={handleClickCancelDeleteColaborador}
+          isSubmiting={isLoadingDelete}
         />
       </Box>
     </Box>

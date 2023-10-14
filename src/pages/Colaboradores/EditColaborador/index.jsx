@@ -40,7 +40,7 @@ export default function EditColaborador() {
           isClosable: true,
           position: 'top-right',
         });
-        navigate('/colaborador');
+        navigate('/colaboradores');
       }
     }
 
@@ -54,7 +54,12 @@ export default function EditColaborador() {
   const handleSubmit = useCallback(
     async (colaborador) => {
       try {
-        await httpClient.patch(`/colaborador/${id}`, colaborador);
+        if (!colaborador.password) {
+          delete colaborador.password;
+        }
+
+        await httpClient.patch(`/colaboradores/${id}`, colaborador);
+        
         toast({
           title: 'Colaborador editado com sucesso!',
           status: 'success',
@@ -62,7 +67,7 @@ export default function EditColaborador() {
           isClosable: true,
           position: 'top-right',
         });
-        navigate('/colaborador');
+        navigate('/colaboradores');
       } catch (err) {
         toast({
           title: 'Erro ao editar colaborador!',

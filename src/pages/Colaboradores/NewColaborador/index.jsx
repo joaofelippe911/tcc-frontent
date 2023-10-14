@@ -19,7 +19,7 @@ export default function NewColaborador() {
           isClosable: true,
           position: 'top-right',
         });
-        navigate('/colaborador');
+        navigate('/colaboradores');
       } catch (err) {
         toast({
           title: 'Erro ao cadastrar colaborador!',
@@ -35,7 +35,7 @@ export default function NewColaborador() {
 
   return (
     <Box p={4}>
-      <Heading marginBottom={8}>Adicionar Colaborador</Heading>
+      <Heading marginBottom={8}>Adicionar colaborador</Heading>
       <ColaboradorForm onSubmit={handleSubmit} />
     </Box>
   );

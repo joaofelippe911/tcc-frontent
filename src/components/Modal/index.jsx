@@ -20,7 +20,7 @@ export default function Modal({
 }) {
   return (
     <ChakraModal isOpen={open} onClose={onCancel} autoFocus={false} >
-      <ModalOverlay />
+      <ModalOverlay backdropFilter='blur(3px)'/>
       <ModalContent>
         <ModalHeader>{title}</ModalHeader>
         <ModalCloseButton />

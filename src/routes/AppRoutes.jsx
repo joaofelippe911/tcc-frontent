@@ -1,12 +1,12 @@
 import { Route, Routes } from 'react-router-dom';
 import Home from '../pages/Home';
 import Clientes from '../pages/Clientes';
-import Colaborador from '../pages/Colaborador';
+import Colaboradores from '../pages/Colaboradores';
 import Funcao from '../pages/Funcao';
 import NewCliente from '../pages/Clientes/NewCliente';
 import EditCliente from '../pages/Clientes/EditCliente';
-import NewColaborador from '../pages/Colaborador/NewColaborador';
-import EditColaborador from '../pages/Colaborador/EditColaborador';
+import NewColaborador from '../pages/Colaboradores/NewColaborador';
+import EditColaborador from '../pages/Colaboradores/EditColaborador';
 import NewFuncao from '../pages/Funcao/NewFuncao';
 import EditFuncao from '../pages/Funcao/EditFuncao';
 import Fornecedores from '../pages/Fornecedores';
@@ -26,9 +26,9 @@ export default function AppRoutes() {
       <Route path="/clientes/adicionar" element={<NewCliente />} />
       <Route path="/clientes/editar/:id" element={<EditCliente />} />
 
-      <Route path="/colaborador" element={<Colaborador />} />
-      <Route path="/colaborador/adicionar" element={<NewColaborador />} />
-      <Route path="/colaborador/editar/:id" element={<EditColaborador />} />
+      <Route path="/colaboradores" element={<Colaboradores />} />
+      <Route path="/colaboradores/adicionar" element={<NewColaborador />} />
+      <Route path="/colaboradores/editar/:id" element={<EditColaborador />} />
 
       <Route path="/funcao" element={<Funcao />} />
       <Route path="/funcao/adicionar" element={<NewFuncao />} />

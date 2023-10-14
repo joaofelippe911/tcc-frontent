@@ -26,7 +26,7 @@ import { useAuthContext } from '../../contexts/AuthContext';
 const LinkItems = [
   { name: 'Home', icon: FiHome, path: '/' },
   { name: 'Clientes', icon: FiUsers, path: '/clientes' },
-  { name: 'Colaboradores', icon: FiUsers, path: '/colaborador' },
+  { name: 'Colaboradores', icon: FiUsers, path: '/colaboradores' },
   { name: 'Funções', icon: FiUsers, path: '/funcao' },
   { name: 'Fornecedores', icon: FiUsers, path: '/fornecedores' },
   { name: 'Produtos', icon: FiUsers, path: '/produtos' },

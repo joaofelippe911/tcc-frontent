@@ -27,7 +27,7 @@ const LinkItems = [
   { name: 'Home', icon: FiHome, path: '/' },
   { name: 'Clientes', icon: FiUsers, path: '/clientes' },
   { name: 'Colaboradores', icon: FiUsers, path: '/colaboradores' },
-  { name: 'Funções', icon: FiUsers, path: '/funcao' },
+  { name: 'Funções', icon: FiUsers, path: '/funcoes' },
   { name: 'Fornecedores', icon: FiUsers, path: '/fornecedores' },
   { name: 'Produtos', icon: FiUsers, path: '/produtos' },
 ];

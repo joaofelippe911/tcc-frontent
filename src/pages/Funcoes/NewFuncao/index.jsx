@@ -19,7 +19,7 @@ export default function NewFuncao() {
           isClosable: true,
           position: 'top-right',
         });
-        navigate('/funcao');
+        navigate('/funcoes');
       } catch (err) {
         toast({
           title: 'Erro ao cadastrar funcão!',

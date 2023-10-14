@@ -28,13 +28,14 @@ export default function Funcao() {
   const [isDeleteFuncaoModalVisible, setIsDeleteFuncaoModalVisible] =
     useState(false);
   const [funcaoBeingDeleted, setFuncaoBeingDelete] = useState();
+  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
 
   const navigate = useNavigate();
   const toast = useToast();
 
   const handleClickEditFuncao = useCallback(
     (id) => {
-      navigate(`/funcao/editar/${id}`);
+      navigate(`/funcoes/editar/${id}`);
     },
     [navigate]
   );
@@ -46,6 +47,7 @@ export default function Funcao() {
 
   const handleConfirmDeleteFuncao = useCallback(async () => {
     try {
+      setIsLoadingDelete(true);
       await httpClient.delete(`/funcoes/${funcaoBeingDeleted?.id}`);
 
       setFuncoes((prevState) =>
@@ -54,6 +56,7 @@ export default function Funcao() {
 
       setIsDeleteFuncaoModalVisible(false);
       setFuncaoBeingDelete(undefined);
+      setIsLoadingDelete(false);
 
       toast({
         title: 'Função deletada com sucesso!',
@@ -63,6 +66,7 @@ export default function Funcao() {
         position: 'top-right',
       });
     } catch (err) {
+      setIsLoadingDelete(false);
       toast({
         title: 'Erro ao deletar função!',
         status: 'error',
@@ -74,6 +78,7 @@ export default function Funcao() {
   }, [funcaoBeingDeleted, toast]);
 
   const handleClickCancelDeleteFuncao = useCallback(() => {
+    setIsDeleteFuncaoModalVisible(false);
     setFuncaoBeingDelete(undefined);
   }, []);
 
@@ -120,7 +125,7 @@ export default function Funcao() {
       <Box p={4}>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Heading>Funções</Heading>
-          <Button onClick={() => navigate('/funcao/adicionar')}>
+          <Button onClick={() => navigate('/funcoes/adicionar')}>
             Adicionar Função
           </Button>
         </Box>
@@ -130,6 +135,7 @@ export default function Funcao() {
             <Thead>
               <Tr>
                 <Th>Nome</Th>
+                <Th>Ações</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -166,6 +172,7 @@ export default function Funcao() {
           onConfirm={handleConfirmDeleteFuncao}
           confirmText="Deletar"
           onCancel={handleClickCancelDeleteFuncao}
+          isSubmiting={isLoadingDelete}
         />
       </Box>
     </Box>

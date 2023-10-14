@@ -40,7 +40,7 @@ export default function EditFuncao() {
         });
 
         setIsLoading(false);
-        navigate('/funcao');
+        navigate('/funcoes');
       }
     }
 
@@ -62,7 +62,7 @@ export default function EditFuncao() {
           isClosable: true,
           position: 'top-right',
         });
-        navigate('/funcao');
+        navigate('/funcoes');
       } catch (err) {
         toast({
           title: 'Erro ao editar função!',

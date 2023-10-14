@@ -99,6 +99,7 @@ export function FornecedorForm({ onSubmit, fornecedor = undefined }) {
           value={cnpj}
           onChange={handleCnpjChange}
           placeholder="Digite o CNPJ do fornecedor"
+          maxLength={18}
         />
         {Boolean(getErrorMessageByFieldName("cnpj")) && (
           <FormErrorMessage>

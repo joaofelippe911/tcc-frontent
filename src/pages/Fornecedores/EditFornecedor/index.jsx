@@ -4,8 +4,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { httpClient } from '../../../services/HttpClient';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AxiosError } from 'axios';
+import Spinner from '../../../components/Spinner';
 
 export default function EditFornecedor() {
+  const [isLoading, setIsLoading] = useState(false);
   const [fornecedor, setFornecedor] = useState();
 
   const navigate = useNavigate();
@@ -17,16 +19,19 @@ export default function EditFornecedor() {
 
     async function loadFornecedor() {
       try {
+        setIsLoading(true);
         const { data } = await httpClient.get(`/fornecedores/${id}`, {
           signal: controller.signal,
         });
 
         setFornecedor(data);
+        setIsLoading(false);
       } catch (err) {
         if (err instanceof AxiosError && err.name === 'CanceledError') {
           return;
         }
 
+        setIsLoading(false);
         toast({
           title: 'Erro ao buscar dados do Fornecedor!',
           status: 'error',
@@ -71,13 +76,16 @@ export default function EditFornecedor() {
   );
 
   return (
-    <Box>
-      <Heading marginBottom={8}>Editar Fornecedor</Heading>
-      <FornecedorForm
-        onSubmit={handleSubmit}
-        Fornecedor={fornecedor}
-        key={fornecedor?.id}
-        />
+    <Box position="relative">
+      <Spinner spinning={isLoading} />
+      <Box p={4}>
+        <Heading marginBottom={8}>Editar fornecedor</Heading>
+        <FornecedorForm
+          onSubmit={handleSubmit}
+          Fornecedor={fornecedor}
+          key={fornecedor?.id}
+          />
+      </Box>
     </Box>
   );
 }

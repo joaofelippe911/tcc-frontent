@@ -43,7 +43,7 @@ export default function NewProduto() {
   );
 
   return (
-    <Box>
+    <Box p={4}>
       <Heading marginBottom={8}>Adicionar produto</Heading>
       <ProdutoForm onSubmit={handleSubmit} />
     </Box>

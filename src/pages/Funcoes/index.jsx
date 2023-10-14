@@ -126,7 +126,7 @@ export default function Funcao() {
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Heading>Funções</Heading>
           <Button onClick={() => navigate('/funcoes/adicionar')}>
-            Adicionar Função
+            Adicionar função
           </Button>
         </Box>
         <TableContainer marginTop={16}>

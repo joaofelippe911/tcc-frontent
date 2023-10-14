@@ -4,8 +4,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { httpClient } from '../../../services/HttpClient';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AxiosError } from 'axios';
+import Spinner from '../../../components/Spinner';
 
 export default function EditProduto() {
+  const [isLoading, setIsLoading] = useState(false);
   const [produto, setProduto] = useState();
 
   const navigate = useNavigate();
@@ -17,16 +19,19 @@ export default function EditProduto() {
 
     async function loadProduto() {
       try {
+        setIsLoading(true);
         const { data } = await httpClient.get(`/produtos/${id}`, {
           signal: controller.signal,
         });
 
         setProduto(data);
+        setIsLoading(false);
       } catch (err) {
         if (err instanceof AxiosError && err.name === 'CanceledError') {
           return;
         }
 
+        setIsLoading(false);
         toast({
           title: 'Erro ao buscar dados do produto!',
           status: 'error',
@@ -71,13 +76,16 @@ export default function EditProduto() {
   );
 
   return (
-    <Box>
-      <Heading marginBottom={8}>Editar produto</Heading>
-      <produtoForm
-        onSubmit={handleSubmit}
-        produto={produto}
-        key={produto?.id}
+    <Box position="relative">
+      <Spinner spinning={isLoading} />
+      <Box p={4}>
+        <Heading marginBottom={8}>Editar produto</Heading>
+        <ProdutoForm
+          onSubmit={handleSubmit}
+          produto={produto}
+          key={produto?.id}
         />
+      </Box>
     </Box>
   );
 }

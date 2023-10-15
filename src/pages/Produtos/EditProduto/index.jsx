@@ -53,7 +53,18 @@ export default function EditProduto() {
   const handleSubmit = useCallback(
     async (produto) => {
       try {
-        await httpClient.patch(`/produtos/${id}`, produto);
+        const formData = new FormData();
+
+        console.log({edit: produto});
+
+        Object.entries(produto).forEach(([name, value]) => {
+          formData.append(name, value);
+        })
+
+        await httpClient.post(`/produtos/${id}?_method=PATCH`, produto, {
+          headers: { "Content-Type": 'multipart/form-data' }
+        });
+
         toast({
           title: 'Produto editado com sucesso!',
           status: 'success',

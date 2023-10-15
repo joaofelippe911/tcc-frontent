@@ -21,12 +21,13 @@ import { httpClient } from '../../services/HttpClient';
 import { AxiosError } from 'axios';
 import Modal from '../../components/Modal';
 import Spinner from '../../components/Spinner';
+import { formatValor } from '../../utils/formatValor';
 
 export default function Produtos() {
   const [isLoading, setIsLoading] = useState(false);
   const [produtos, setProdutos] = useState([]);
   const [isDeleteProdutoModalVisible, setIsDeleteProdutoModalVisible] = useState(false);
-  const [produtoBeingDeleted, setProdutoBeingDelete] = useState();
+  const [produtoBeingDeleted, setProdutoBeingDeleted] = useState();
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
 
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ export default function Produtos() {
   );
 
   const handleClickDeleteProduto = useCallback((produto) => {
-    setProdutoBeingDelete(Produtos);
+    setProdutoBeingDeleted(produto);
     setIsDeleteProdutoModalVisible(true);
   }, []);
 
@@ -54,7 +55,7 @@ export default function Produtos() {
       );
 
       setIsDeleteProdutoModalVisible(false);
-      setProdutoBeingDelete(undefined);
+      setProdutoBeingDeleted(undefined);
       setIsLoadingDelete(false);
 
       toast({
@@ -78,7 +79,7 @@ export default function Produtos() {
 
   const handleClickCancelDeleteProduto = useCallback(() => {
     setIsDeleteProdutoModalVisible(false);
-    setProdutoBeingDelete(undefined);
+    setProdutoBeingDeleted(undefined);
   }, []);
 
   useEffect(() => {
@@ -115,7 +116,7 @@ export default function Produtos() {
       controller.abort();
     };
   }, [toast]);
-
+  
   return (
     <Box position="relative">
       <Spinner spinning={isLoading} />
@@ -142,7 +143,7 @@ export default function Produtos() {
               {produtos.map((produto) => (
                 <Tr key={produto.id}>
                   <Td>{produto.nome}</Td>
-                  <Td>{produto.valor}</Td>
+                  <Td>{formatValor(produto.valor.toFixed(2).toString())}</Td>
                   <Td>{produto.estoque}</Td>
                   <Td>
                     <Flex>
@@ -159,7 +160,7 @@ export default function Produtos() {
                         fontSize={20}
                         color="#FC5050"
                         cursor="pointer"
-                        onClick={() => handleClickDeleteProduto(produtos)}
+                        onClick={() => handleClickDeleteProduto(produto)}
                       />
                     </Flex>
                   </Td>

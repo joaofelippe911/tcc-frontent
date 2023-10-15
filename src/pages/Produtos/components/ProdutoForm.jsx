@@ -15,7 +15,6 @@ import {
 } from "@chakra-ui/react";
 import { useCallback, useEffect, useState } from "react";
 import useErrors from "../../../hooks/useErrors";
-import { onlyNumbers } from "../../../utils/onlyNumbers";
 import { httpClient } from "../../../services/HttpClient";
 import { AxiosError } from "axios";
 import  {formatValor} from "../../../utils/formatValor";
@@ -23,6 +22,7 @@ import { motion, useAnimation } from "framer-motion";
 import { PreviewImage } from "./PreviewImage";
 
 import flowerImage from '../../../assets/images/flower.png';
+import { formatValorParaApi } from '../../../utils/formatValorParaApi';
 
 const flowerImageAnimation = {
   rest: {
@@ -68,7 +68,7 @@ const imageAnimation = {
 
 export function ProdutoForm({ onSubmit, produto = undefined }) {
   const [nome, setNome] = useState(produto?.nome || "");
-  const [valor, setValor] = useState(produto?.valor ? formatValor(produto.valor) : "");
+  const [valor, setValor] = useState(produto?.valor ? formatValor(produto.valor.toFixed(2).toString()) : "");
   const [estoque, setEstoque] = useState(produto?.estoque ? produto.estoque : "");
   const [imagem, setImagem] = useState(produto?.imagem || "");
   const [preview, setPreview] = useState(undefined);
@@ -97,7 +97,7 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
 
       await onSubmit({
         nome,
-        valor: onlyNumbers(valor),
+        valor: formatValorParaApi(valor),
         estoque,
         imagem,
         fornecedor_id,
@@ -196,7 +196,12 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
     loadFornecedores();
   }, [toast]);
 
-  const isFormValid = nome && valor && estoque && imagem && fornecedor_id  && errors.length === 0;
+  const isFormValid =
+    nome &&
+    valor &&
+    estoque &&
+    fornecedor_id &&
+    errors.length === 0;
 
   useEffect(() => {
     if (!imagem) {
@@ -211,6 +216,14 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
       URL.revokeObjectURL(url);
     }
   }, [imagem]);
+
+  useEffect(() => {
+    if (!produto?.imagem_url) {
+      return;
+    }
+
+    setPreview(`http://localhost:8000/images/produtos/${produto.imagem_url}`);
+  }, [produto?.imagem_url]);
 
   return (
     <form onSubmit={handleSubmit}>

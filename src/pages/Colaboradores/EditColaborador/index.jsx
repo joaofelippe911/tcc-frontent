@@ -34,7 +34,7 @@ export default function EditColaborador() {
 
         setIsLoading(false);
         toast({
-          title: 'Erro ao buscar dados do colaborador!',
+          title: err.response.data.message || 'Erro ao buscar dados do colaborador!',
           status: 'error',
           duration: 10000,
           isClosable: true,
@@ -70,7 +70,7 @@ export default function EditColaborador() {
         navigate('/colaboradores');
       } catch (err) {
         toast({
-          title: 'Erro ao editar colaborador!',
+          title: err.response.data.message || 'Erro ao editar colaborador!',
           status: 'error',
           duration: 10000,
           isClosable: true,

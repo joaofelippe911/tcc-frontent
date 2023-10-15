@@ -63,7 +63,7 @@ export default function Colaborador() {
       setIsLoadingDelete(false);
 
       toast({
-        title: 'colaborador deletado com sucesso!',
+        title: 'Colaborador deletado com sucesso!',
         status: 'success',
         duration: 5000,
         isClosable: true,
@@ -73,7 +73,7 @@ export default function Colaborador() {
       setIsLoadingDelete(false);
 
       toast({
-        title: 'Erro ao deletar colaborador!',
+        title: err.response.data.message || 'Erro ao deletar colaborador!',
         status: 'error',
         duration: 10000,
         isClosable: true,
@@ -106,7 +106,7 @@ export default function Colaborador() {
 
         setIsLoading(false);
         toast({
-          title: 'Erro ao buscar os colaborador!',
+          title: err.response.data.message || 'Erro ao buscar os colaboradores!',
           status: 'error',
           duration: 10000,
           isClosable: true,

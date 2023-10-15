@@ -68,7 +68,7 @@ export default function Funcao() {
     } catch (err) {
       setIsLoadingDelete(false);
       toast({
-        title: 'Erro ao deletar função!',
+        title: err.response.data.message || 'Erro ao deletar função!',
         status: 'error',
         duration: 10000,
         isClosable: true,
@@ -100,7 +100,7 @@ export default function Funcao() {
         }
 
         toast({
-          title: err.response.data.message || 'Erro ao buscar funções!',
+          title: err.response.data.message || 'Erro ao buscar as funções!',
           status: 'error',
           duration: 10000,
           isClosable: true,

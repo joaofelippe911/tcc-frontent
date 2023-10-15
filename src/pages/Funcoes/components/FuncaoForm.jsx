@@ -4,6 +4,7 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
+  useToast,
 } from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';
 import useErrors from '../../../hooks/useErrors';
@@ -14,12 +15,25 @@ import { AxiosError } from 'axios';
 export function FuncaoForm({ onSubmit, funcao = undefined }) {
   const [isSubmiting, setIsSubmiting] = useState(false);
   const [nome, setNome] = useState(funcao?.nome || '');
-  const [permissoes, setPermissoes] = useState(funcao?.permissoes ? funcao?.permissoes.map((permissao) => ({ label: permissao.descricao, value: permissao.id })) : []);
+  const [permissoes, setPermissoes] = useState(
+    funcao?.permissoes
+      ? funcao?.permissoes.map((permissao) => ({
+          label: permissao.descricao,
+          value: permissao.id,
+        }))
+      : []
+  );
   const [isLoadingPermissoes, setIsLoadingPermissoes] = useState(false);
   const [allPermissoes, setAllPermissoes] = useState([]);
 
-  const { setError, removeError, errors, getErrorMessageByFieldName } =
-    useErrors();
+  const {
+    setError,
+    removeError,
+    errors,
+    getErrorMessageByFieldName
+  } = useErrors();
+
+  const toast = useToast();
 
   const handleSubmit = useCallback(
     async (e) => {
@@ -29,7 +43,7 @@ export function FuncaoForm({ onSubmit, funcao = undefined }) {
 
       await onSubmit({
         nome,
-        permissoes: permissoes.map((p) => p.value)
+        permissoes: permissoes.map((p) => p.value),
       });
 
       setIsSubmiting(false);
@@ -42,7 +56,7 @@ export function FuncaoForm({ onSubmit, funcao = undefined }) {
       setNome(e.target.value);
 
       if (!e.target.value) {
-        setError({ field: 'nome', message: 'Função é obrigatória!' });
+        setError({ field: 'nome', message: 'Nome é obrigatório!' });
         return;
       }
 
@@ -67,12 +81,19 @@ export function FuncaoForm({ onSubmit, funcao = undefined }) {
 
         setAllPermissoes(data);
         setIsLoadingPermissoes(false);
-      } catch (error) {
-        if (error instanceof AxiosError && error.name === 'CanceledError') {
+      } catch (err) {
+        if (err instanceof AxiosError && err.name === 'CanceledError') {
           return;
         }
 
         setIsLoadingPermissoes(false);
+        toast({
+          title: err.response.data.message || 'Erro ao carregar permissões!',
+          status: 'error',
+          duration: 10000,
+          isClosable: true,
+          position: 'top-right',
+        });
       }
     }
 
@@ -81,7 +102,7 @@ export function FuncaoForm({ onSubmit, funcao = undefined }) {
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [toast]);
 
   const isFormValid = nome && errors.length === 0;
 
@@ -105,7 +126,7 @@ export function FuncaoForm({ onSubmit, funcao = undefined }) {
 
       <FormControl
         marginTop={4}
-        isInvalid={Boolean(getErrorMessageByFieldName('nome'))}
+        isInvalid={Boolean(getErrorMessageByFieldName('permissoes'))}
       >
         <FormLabel>Permissões</FormLabel>
         <Select
@@ -120,9 +141,9 @@ export function FuncaoForm({ onSubmit, funcao = undefined }) {
           }))}
           placeholder="Selecione as permissões"
         />
-        {Boolean(getErrorMessageByFieldName('nome')) && (
+        {Boolean(getErrorMessageByFieldName('permissoes')) && (
           <FormErrorMessage>
-            {getErrorMessageByFieldName('nome')}
+            {getErrorMessageByFieldName('permissoes')}
           </FormErrorMessage>
         )}
       </FormControl>

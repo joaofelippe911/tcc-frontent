@@ -22,7 +22,7 @@ export default function NewCliente() {
         navigate('/clientes');
       } catch (err) {
           toast({
-              title: 'Erro ao cadastrar cliente!',
+              title: err.response.data.message || 'Erro ao cadastrar cliente!',
               status: 'error',
               duration: 10000,
               isClosable: true,

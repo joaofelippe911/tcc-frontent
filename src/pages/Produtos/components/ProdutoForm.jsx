@@ -72,10 +72,8 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
   const [estoque, setEstoque] = useState(produto?.estoque ? produto.estoque : "");
   const [imagem, setImagem] = useState(produto?.imagem || "");
   const [preview, setPreview] = useState(undefined);
-  // fornecedor
   const [fornecedor_id, setFornecedor] = useState(produto?.fornecedor_id || "");
   const [isSubmiting, setIsSubmiting] = useState(false);
-  // fornecedor
   const [fornecedores, setFornecedores] = useState([]);
 
   const toast = useToast();
@@ -153,7 +151,6 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
 
   );
 
-  // fornecedor
   const handleFornecedorChange = useCallback(
     (e) => {
       setFornecedor(e.target.value);
@@ -172,7 +169,7 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
     (e) => {
       setImagem(e.target.files[0]);
     },
-    [setError, removeError]
+    []
   );
  
   useEffect(() => {
@@ -187,7 +184,7 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
         }
 
         toast({
-          title: 'Erro ao carregar funções!',
+          title: err.response.data.message || 'Erro ao carregar fornecedores!',
           status: 'error',
           duration: 10000,
           isClosable: true,
@@ -197,7 +194,7 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
     }
 
     loadFornecedores();
-  }, []);
+  }, [toast]);
 
   const isFormValid = nome && valor && estoque && imagem && fornecedor_id  && errors.length === 0;
 
@@ -277,7 +274,6 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
         isInvalid={Boolean(getErrorMessageByFieldName("fornecedor"))}
       >
         <FormLabel>Fornecedor</FormLabel>
-        {/* fornecedor */}
         <Select
           placeholder="Selecione o fornecedor"
           onChange={handleFornecedorChange}

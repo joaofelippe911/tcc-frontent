@@ -22,7 +22,7 @@ export default function NewColaborador() {
         navigate('/colaboradores');
       } catch (err) {
         toast({
-          title: 'Erro ao cadastrar colaborador!',
+          title: err.response.data.message || 'Erro ao cadastrar colaborador!',
           status: 'error',
           duration: 10000,
           isClosable: true,

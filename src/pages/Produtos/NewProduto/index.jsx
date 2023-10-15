@@ -29,9 +29,9 @@ export default function NewProduto() {
           });
         navigate('/produtos');
       } catch (err) {
-          console.log(err);
+        
           toast({
-              title: 'Erro ao cadastrar produto!',
+              title: err.response.data.message || 'Erro ao cadastrar produto!',
               status: 'error',
               duration: 10000,
               isClosable: true,

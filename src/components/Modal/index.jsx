@@ -1,7 +1,6 @@
 import {
   Button,
   Modal as ChakraModal,
-  ModalCloseButton,
   ModalContent,
   ModalFooter,
   ModalHeader,
@@ -23,7 +22,6 @@ export default function Modal({
       <ModalOverlay backdropFilter='blur(3px)'/>
       <ModalContent>
         <ModalHeader>{title}</ModalHeader>
-        <ModalCloseButton />
 
         <ModalFooter>
           <Button

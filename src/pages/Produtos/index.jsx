@@ -67,7 +67,7 @@ export default function Produtos() {
     } catch (err) {
       setIsLoadingDelete(false);
       toast({
-        title: 'Erro ao deletar Produto!',
+        title: err.response.data.message || 'Erro ao deletar produto!',
         status: 'error',
         duration: 10000,
         isClosable: true,
@@ -100,7 +100,7 @@ export default function Produtos() {
 
         setIsLoading(false);
         toast({
-          title: 'Erro ao buscar os Produtos!',
+          title: err.response.data.message || 'Erro ao buscar os produtos!',
           status: 'error',
           duration: 10000,
           isClosable: true,

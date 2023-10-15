@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 import { httpClient } from '../services/HttpClient';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@chakra-ui/react';
+import { AxiosError } from 'axios';
 
 const AuthContext = createContext();
 
@@ -21,11 +22,24 @@ export function AuthContextProvider({ children }) {
 
       setUser(data.user);
       setSigned(true);
+      toast.closeAll();
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
-    } catch (error) {
+    } catch (err) {
+      if (err instanceof AxiosError && err.message === "Network Error") {
+        toast({
+          title: 'Erro ao se conectar com o servidor.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
+
+        return;
+      }
+
       toast({
-        title: 'Credenciais inválidas',
+        title: 'Credenciais inválidas!',
         status: 'error',
         duration: 5000,
         isClosable: true,
@@ -43,8 +57,9 @@ export function AuthContextProvider({ children }) {
     localStorage.removeItem("token");
     setSigned(false);
     setUser(undefined);
+    toast.closeAll();
     navigate('/')
-  }, [navigate]);
+  }, [navigate, toast]);
 
   useEffect(() => {
     setLoading(true);

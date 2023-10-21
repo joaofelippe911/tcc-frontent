@@ -1,5 +1,4 @@
-import { Box, Image, Center } from '@chakra-ui/react';
-import logo from '../../assets/images/logo.png';
+import { Center } from '@chakra-ui/react';
 
 function Home() {
   return (
@@ -7,7 +6,7 @@ function Home() {
       background="blue"
       width="100%" 
     >
-      
+
     </Center>
   );
 }

@@ -16,6 +16,7 @@ import {
 import { useCallback, useState } from 'react';
 import useErrors from '../../../hooks/useErrors';
 import { httpClient } from '../../../services/HttpClient';
+import isPasswordValid from '../../../utils/isPasswordValid';
 
 export default function ChangePasswordModal({
   open,
@@ -27,7 +28,7 @@ export default function ChangePasswordModal({
   const [isSubmiting, setIsSubmiting] = useState(false);
 
   const toast = useToast();
-  const { setError, removeError, getErrorMessageByFieldName } = useErrors();
+  const { errors, setError, removeError, getErrorMessageByFieldName } = useErrors();
 
   const handlePasswordChange = useCallback(
     (e) => {
@@ -35,6 +36,11 @@ export default function ChangePasswordModal({
 
       if (!e.target.value) {
         setError({ field: 'password', message: 'Senha é obrigatório!' });
+        return;
+      }
+
+      if (!isPasswordValid(e.target.value)) {
+        setError({ field: 'password', message: 'A senha precisa ter entre 8 e 20 caracteres, conter pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial!' });
         return;
       }
 
@@ -47,11 +53,6 @@ export default function ChangePasswordModal({
     try {
       setIsSubmiting(true);
 
-      if (!password) {
-        setError({ field: 'password', message: 'Senha é obrigatório!' });
-        return;
-      }
-
       await httpClient.patch(`/colaboradores/${colaboradorId}`, { password });
       toast({
         title: 'Senha alterada com sucesso!',
@@ -62,6 +63,7 @@ export default function ChangePasswordModal({
       });
 
       setIsSubmiting(false);
+      setPassowrd('');
       afterSubmit();
     } catch (err) {
       setIsSubmiting(false);
@@ -73,7 +75,9 @@ export default function ChangePasswordModal({
         position: 'top-right',
       });
     }
-  }, [colaboradorId, password, toast, afterSubmit, setError]);
+  }, [colaboradorId, password, toast, afterSubmit]);
+
+  const isFormValid = password && errors.length === 0;
 
   return (
     <ChakraModal isOpen={open} onClose={onCancel} autoFocus={false}>
@@ -107,7 +111,7 @@ export default function ChangePasswordModal({
             variant="ghost"
             mr={3}
             onClick={onCancel}
-            disabled={isSubmiting}
+            isDisabled={isSubmiting}
           >
             Cancelar
           </Button>
@@ -115,7 +119,7 @@ export default function ChangePasswordModal({
           <Button
             colorScheme="red"
             onClick={handleClickChangePassword}
-            isDisabled={isSubmiting || !password}
+            isDisabled={isSubmiting || !isFormValid}
             isLoading={isSubmiting}
           >
             Alterar

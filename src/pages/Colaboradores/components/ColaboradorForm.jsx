@@ -16,6 +16,7 @@ import { httpClient } from '../../../services/HttpClient';
 import { AxiosError } from 'axios';
 import isEmailValid from '../../../utils/isEmailValid';
 import ChangePasswordModal from './ChangePasswordModal';
+import isPasswordValid from '../../../utils/isPasswordValid';
 
 export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
   const [nome, setNome] = useState(colaborador?.nome || '');
@@ -144,6 +145,11 @@ export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
 
       if (!e.target.value) {
         setError({ field: 'password', message: 'Senha é obrigatório!' });
+        return;
+      }
+
+      if (!isPasswordValid(e.target.value)) {
+        setError({ field: 'password', message: 'A senha precisa ter entre 8 e 20 caracteres, conter pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial!' });
         return;
       }
 

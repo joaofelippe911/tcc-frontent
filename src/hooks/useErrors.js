@@ -7,7 +7,18 @@ export default function useErrors() {
     ({ field, message }) => {
       const errorAlreadyExists = errors.find((error) => error.field === field);
 
-      if (errorAlreadyExists) return;
+      if (errorAlreadyExists) {
+        if (errorAlreadyExists.message === message) {
+          return;
+        }
+
+        setErrors((prevState) => {
+          const filteredErrors = prevState.filter((error) => error.field !== field);
+          return [...filteredErrors, { field, message }]
+        });
+
+        return;
+      };
 
       setErrors((prevState) => [...prevState, { field, message }]);
     },

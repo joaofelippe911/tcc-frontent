@@ -19,7 +19,7 @@ import { httpClient } from '../../../services/HttpClient';
 import isPasswordValid from '../../../utils/isPasswordValid';
 
 export default function ChangePasswordModal({
-  open,
+  open = true,
   onCancel,
   colaboradorId,
   afterSubmit,

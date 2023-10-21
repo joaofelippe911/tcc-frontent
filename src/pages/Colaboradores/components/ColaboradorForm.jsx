@@ -337,12 +337,15 @@ export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
           Salvar
         </Button>
       </form>
-      <ChangePasswordModal
-        open={isChangePasswordModalVisible}
-        onCancel={() => setIsChangePasswordModalVisible(false)}
-        colaboradorId={colaborador?.id}
-        afterSubmit={() => setIsChangePasswordModalVisible(false)}
-      />
+      {
+        isChangePasswordModalVisible && (
+          <ChangePasswordModal
+            onCancel={() => setIsChangePasswordModalVisible(false)}
+            colaboradorId={colaborador?.id}
+            afterSubmit={() => setIsChangePasswordModalVisible(false)}
+          />
+        )
+      }
     </>
   );
 }

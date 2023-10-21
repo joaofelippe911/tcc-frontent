@@ -3,15 +3,11 @@ import logo from '../../assets/images/logo.png';
 
 function Home() {
   return (
-    <Center>
-      <Box>
+    <Center
+      background="blue"
+      width="100%" 
+    >
       
-        <Image
-          src={logo} 
-          alt="logo" 
-          boxSize="700px" 
-        />
-      </Box>
     </Center>
   );
 }

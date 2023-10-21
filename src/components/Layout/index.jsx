@@ -17,6 +17,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Image,
 } from '@chakra-ui/react';
 import { FiHome, FiMenu, FiChevronDown, FiUsers } from 'react-icons/fi';
 import logo from '../../assets/images/logo.png';
@@ -46,7 +47,11 @@ const SidebarContent = ({ onClose, ...rest }) => {
       {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-           <img src={logo} alt='logo' height={5}></img>
+          <Image
+            src={logo}
+            alt='logo'
+            display={{ base: 'none', md: 'block' }}
+          />
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
@@ -124,14 +129,12 @@ const MobileNav = ({ onOpen, ...rest }) => {
         icon={<FiMenu />}
       />
 
-      <Text
+      <Image
+        src={logo}
+        alt='logo'
+        height={50}
         display={{ base: 'flex', md: 'none' }}
-        fontSize="2xl"
-        fontFamily="monospace"
-        fontWeight="bold"
-      >
-        Logo
-      </Text>
+      />
 
       <HStack spacing={{ base: '0', md: '6' }}>
         <Flex alignItems={'center'}>

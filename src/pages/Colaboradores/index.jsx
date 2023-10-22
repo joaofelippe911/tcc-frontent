@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
-  Flex,
   Heading,
   Table,
   TableCaption,
@@ -15,7 +14,6 @@ import {
   Tr,
   useToast,
 } from '@chakra-ui/react';
-import { FiEdit, FiTrash } from 'react-icons/fi';
 
 import { httpClient } from '../../services/HttpClient';
 import formatPhone from '../../utils/formatPhone';

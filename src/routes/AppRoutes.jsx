@@ -45,17 +45,38 @@ export default function AppRoutes() {
         <Route path="/colaboradores/editar/:id" element={<EditColaborador />} />
       </Route>
 
-      <Route path="/funcoes" element={<Funcoes />} />
-      <Route path="/funcoes/adicionar" element={<NewFuncao />} />
-      <Route path="/funcoes/editar/:id" element={<EditFuncao />} />
+      {/* Funcoes */}
+      <Route element={<RequireAuthorization allowedPermissions={['funcao-index']} />}>
+        <Route path="/funcoes" element={<Funcoes />} />
+      </Route>
+      <Route element={<RequireAuthorization allowedPermissions={['funcao-store']} />}>
+        <Route path="/funcoes/adicionar" element={<NewFuncao />} />
+      </Route>
+      <Route element={<RequireAuthorization allowedPermissions={['funcao-show']} />}>
+        <Route path="/funcoes/editar/:id" element={<EditFuncao />} />
+      </Route>
 
-      <Route path="/fornecedores" element={<Fornecedores />} />
-      <Route path="/fornecedores/adicionar" element={<NewFornecedor />} />
-      <Route path="/fornecedores/editar/:id" element={<EditFornecedor />} />
+      {/* Fornecedores */}
+      <Route element={<RequireAuthorization allowedPermissions={['fornecedor-index']} />}>
+        <Route path="/fornecedores" element={<Fornecedores />} />
+      </Route>
+      <Route element={<RequireAuthorization allowedPermissions={['fornecedor-store']} />}>
+        <Route path="/fornecedores/adicionar" element={<NewFornecedor />} />
+      </Route>
+      <Route element={<RequireAuthorization allowedPermissions={['fornecedor-show']} />}>
+        <Route path="/fornecedores/editar/:id" element={<EditFornecedor />} />
+      </Route>
 
-      <Route path="/produtos" element={<Produtos />} />
-      <Route path="/produtos/adicionar" element={<NewProduto />} />
-      <Route path="/produtos/editar/:id" element={<EditProdutos />} />
+      {/* Produtos */}
+      <Route element={<RequireAuthorization allowedPermissions={['produto-index']} />}>
+        <Route path="/produtos" element={<Produtos />} />
+      </Route>
+      <Route element={<RequireAuthorization allowedPermissions={['produto-store']} />}>
+        <Route path="/produtos/adicionar" element={<NewProduto />} />
+      </Route>
+      <Route element={<RequireAuthorization allowedPermissions={['produto-show']} />}>
+        <Route path="/produtos/editar/:id" element={<EditProdutos />} />
+      </Route>
 
       <Route path="/inautorizado" element={<Unauthorized />} />
     </Routes>

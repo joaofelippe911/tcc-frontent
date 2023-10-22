@@ -24,6 +24,7 @@ import { AxiosError } from 'axios';
 import Modal from '../../components/Modal';
 import Spinner from '../../components/Spinner';
 import { useAuthContext } from '../../contexts/AuthContext';
+import TableRowActions from '../../components/TableRowActions';
 
 export default function Clientes() {
   const [clientes, setClientes] = useState([]);
@@ -36,6 +37,12 @@ export default function Clientes() {
   const navigate = useNavigate();
   const toast = useToast();
   const { user } = useAuthContext();
+
+  const canAdd = useMemo(() => {
+    const hasPermission = user.funcao.permissoes.find(permission => permission.nome === 'cliente-store');
+
+    return Boolean(hasPermission);
+  }, [user]);
 
   const canView = useMemo(() => {
     const hasPermission = user.funcao.permissoes.find(permission => permission.nome === 'cliente-show');
@@ -147,7 +154,10 @@ export default function Clientes() {
       <Box p={4}>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Heading>Clientes</Heading>
-          <Button onClick={() => navigate('/clientes/adicionar')}>
+          <Button
+            isDisabled={!canAdd}
+            onClick={() => navigate('/clientes/adicionar')}
+          >
             Adicionar cliente
           </Button>
         </Box>
@@ -171,29 +181,12 @@ export default function Clientes() {
                   <Td>{formatCpf(cliente.cpf)}</Td>
                   <Td>{formatPhone(cliente.telefone)}</Td>
                   <Td>
-                    <Flex>
-                      <FiEdit
-                        fontSize={20}
-                        color="#ED64A6"
-                        cursor={canView ? "pointer" : "default"}
-                        onClick={() => handleClickEditCliente(cliente.id)}
-                        style={{
-                          marginRight: 8,
-                          opacity: canView ? 1 : .5,
-                          cursor: !canView ? 'not-allowed' : undefined,
-                        }}
-                      />
-                      <FiTrash
-                        fontSize={20}
-                        color="#FC5050"
-                        cursor={canDelete ? "pointer" : "default"}
-                        onClick={() => handleClickDeleteCliente(cliente)}
-                        style={{
-                          opacity: canDelete ? 1 : .5,
-                          cursor: !canDelete ? 'not-allowed' : undefined,
-                        }}
-                      />
-                    </Flex>
+                    <TableRowActions
+                      canView={canView}
+                      canDelete={canDelete}
+                      onClickView={() => handleClickEditCliente(cliente.id)}
+                      onClickDelete={() => handleClickDeleteCliente(cliente)}
+                    />
                   </Td>
                 </Tr>
               ))}

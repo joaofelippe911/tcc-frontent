@@ -23,21 +23,27 @@ export default function AppRoutes() {
     <Routes>
       <Route path="/" element={<Home />} />
 
+      {/* Clientes */}
       <Route element={<RequireAuthorization allowedPermissions={['cliente-index']} />}>
         <Route path="/clientes" element={<Clientes />} />
       </Route>
-
       <Route element={<RequireAuthorization allowedPermissions={['cliente-store']} />}>
         <Route path="/clientes/adicionar" element={<NewCliente />} />
       </Route>
-
       <Route element={<RequireAuthorization allowedPermissions={['cliente-show']} />}>
         <Route path="/clientes/editar/:id" element={<EditCliente />} />
       </Route>
 
-      <Route path="/colaboradores" element={<Colaboradores />} />
-      <Route path="/colaboradores/adicionar" element={<NewColaborador />} />
-      <Route path="/colaboradores/editar/:id" element={<EditColaborador />} />
+      {/* Colaboradores */}
+      <Route element={<RequireAuthorization allowedPermissions={['colaborador-index']} />}>
+        <Route path="/colaboradores" element={<Colaboradores />} />
+      </Route>
+      <Route element={<RequireAuthorization allowedPermissions={['colaborador-store']} />}>
+        <Route path="/colaboradores/adicionar" element={<NewColaborador />} />
+      </Route>
+      <Route element={<RequireAuthorization allowedPermissions={['colaborador-show']} />}>
+        <Route path="/colaboradores/editar/:id" element={<EditColaborador />} />
+      </Route>
 
       <Route path="/funcoes" element={<Funcoes />} />
       <Route path="/funcoes/adicionar" element={<NewFuncao />} />

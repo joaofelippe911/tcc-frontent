@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -23,6 +23,8 @@ import { formatCpf } from '../../utils/formatCpf';
 import { AxiosError } from 'axios';
 import Modal from '../../components/Modal';
 import Spinner from '../../components/Spinner';
+import { useAuthContext } from '../../contexts/AuthContext';
+import TableRowActions from '../../components/TableRowActions';
 
 export default function Colaborador() {
   const [isLoading, setIsLoading] = useState(false);
@@ -34,18 +36,45 @@ export default function Colaborador() {
 
   const navigate = useNavigate();
   const toast = useToast();
+  const { user } = useAuthContext();
+
+  const canAdd = useMemo(() => {
+    const hasPermission = user.funcao.permissoes.find(permission => permission.nome === 'colaborador-store');
+
+    return Boolean(hasPermission);
+  }, [user]);
+
+  const canView = useMemo(() => {
+    const hasPermission = user.funcao.permissoes.find(permission => permission.nome === 'colaborador-show');
+
+    return Boolean(hasPermission);
+  }, [user]);
+
+  const canDelete = useMemo(() => {
+    const hasPermission = user.funcao.permissoes.find(permission => permission.nome === 'colaborador-destroy');
+
+    return Boolean(hasPermission);
+  }, [user]);
 
   const handleClickEditColaborador = useCallback(
     (id) => {
+      if (!canView) {
+        return;
+      }
+
       navigate(`/colaboradores/editar/${id}`);
     },
-    [navigate]
+    [canView, navigate]
   );
 
   const handleClickDeleteColaborador = useCallback((colaborador) => {
+    if (!canDelete) {
+      return;
+    }
+
     setColaboradorBeingDelete(colaborador);
     setIsDeleteColaboradorModalVisible(true);
-  }, []);
+  }, [canDelete]);
 
   const handleConfirmDeleteColaborador = useCallback(async () => {
     try {
@@ -128,7 +157,10 @@ export default function Colaborador() {
       <Box p={4}>
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <Heading>Colaboradores</Heading>
-          <Button onClick={() => navigate('/colaboradores/adicionar')}>
+          <Button
+            isDisabled={!canAdd}
+            onClick={() => navigate('/colaboradores/adicionar')}
+          >
             Adicionar colaborador
           </Button>
         </Box>
@@ -152,27 +184,12 @@ export default function Colaborador() {
                   <Td>{formatCpf(colaborador.cpf)}</Td>
                   <Td>{formatPhone(colaborador.telefone)}</Td>
                   <Td>
-                    <Flex>
-                      <FiEdit
-                        fontSize={20}
-                        color="#ED64A6"
-                        cursor="pointer"
-                        onClick={() =>
-                          handleClickEditColaborador(colaborador.id)
-                        }
-                        style={{
-                          marginRight: 8,
-                        }}
+                      <TableRowActions
+                        canView={canView}
+                        canDelete={canDelete}
+                        onClickView={() => handleClickEditColaborador(colaborador.id)}
+                        onClickDelete={() => handleClickDeleteColaborador(colaborador)}
                       />
-                      <FiTrash
-                        fontSize={20}
-                        color="#FC5050"
-                        cursor="pointer"
-                        onClick={() =>
-                          handleClickDeleteColaborador(colaborador)
-                        }
-                      />
-                    </Flex>
                   </Td>
                 </Tr>
               ))}

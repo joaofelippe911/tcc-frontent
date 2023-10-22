@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -21,8 +21,8 @@ import { formatCpf } from '../../utils/formatCpf';
 import { AxiosError } from 'axios';
 import Modal from '../../components/Modal';
 import Spinner from '../../components/Spinner';
-import { useAuthContext } from '../../contexts/AuthContext';
 import TableRowActions from '../../components/TableRowActions';
+import ListPageHeader from '../../components/ListPageHeader';
 
 export default function Clientes() {
   const [clientes, setClientes] = useState([]);
@@ -34,45 +34,18 @@ export default function Clientes() {
 
   const navigate = useNavigate();
   const toast = useToast();
-  const { user } = useAuthContext();
-
-  const canAdd = useMemo(() => {
-    const hasPermission = user.funcao.permissoes.find(permission => permission.nome === 'cliente-store');
-
-    return Boolean(hasPermission);
-  }, [user]);
-
-  const canView = useMemo(() => {
-    const hasPermission = user.funcao.permissoes.find(permission => permission.nome === 'cliente-show');
-
-    return Boolean(hasPermission);
-  }, [user]);
-
-  const canDelete = useMemo(() => {
-    const hasPermission = user.funcao.permissoes.find(permission => permission.nome === 'cliente-destroy');
-
-    return Boolean(hasPermission);
-  }, [user]);
 
   const handleClickEditCliente = useCallback(
     (id) => {
-      if (!canView) {
-        return;
-      }
-
       navigate(`/clientes/editar/${id}`);
     },
-    [navigate, canView]
+    [navigate]
   );
 
   const handleClickDeleteCliente = useCallback((cliente) => {
-    if (!canDelete) {
-      return;
-    }
-
     setClienteBeingDelete(cliente);
     setIsDeleteClienteModalVisible(true);
-  }, [canDelete]);
+  }, []);
 
   const handleConfirmDeleteCliente = useCallback(async () => {
     try {
@@ -150,15 +123,12 @@ export default function Clientes() {
     <Box position="relative">
       <Spinner spinning={isLoading} />
       <Box p={4}>
-        <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Heading>Clientes</Heading>
-          <Button
-            isDisabled={!canAdd}
-            onClick={() => navigate('/clientes/adicionar')}
-          >
-            Adicionar cliente
-          </Button>
-        </Box>
+        <ListPageHeader
+          model="cliente"
+          title="Clientes"
+          ButtonLabel="Adicionar cliente"
+          onClickButton={() => navigate('/clientes/adicionar')}
+        />
         <TableContainer marginTop={16}>
           <Table variant="simple">
             <TableCaption>Clientes cadastrados</TableCaption>
@@ -180,8 +150,7 @@ export default function Clientes() {
                   <Td>{formatPhone(cliente.telefone)}</Td>
                   <Td>
                     <TableRowActions
-                      canView={canView}
-                      canDelete={canDelete}
+                      model="cliente"
                       onClickView={() => handleClickEditCliente(cliente.id)}
                       onClickDelete={() => handleClickDeleteCliente(cliente)}
                     />

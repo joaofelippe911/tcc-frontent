@@ -2,9 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
-  Button,
-  Flex,
-  Heading,
   Table,
   TableCaption,
   TableContainer,
@@ -15,13 +12,14 @@ import {
   Tr,
   useToast,
 } from '@chakra-ui/react';
-import { FiEdit, FiTrash } from 'react-icons/fi';
 
 import { httpClient } from '../../services/HttpClient';
 import { AxiosError } from 'axios';
 import Modal from '../../components/Modal';
 import Spinner from '../../components/Spinner';
 import { formatValor } from '../../utils/formatValor';
+import TableRowActions from '../../components/TableRowActions';
+import ListPageHeader from '../../components/ListPageHeader';
 
 export default function Produtos() {
   const [isLoading, setIsLoading] = useState(false);
@@ -121,12 +119,12 @@ export default function Produtos() {
     <Box position="relative">
       <Spinner spinning={isLoading} />
       <Box p={4}>
-        <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Heading>Produtos</Heading>
-          <Button onClick={() => navigate('/produtos/adicionar')}>
-            Adicionar produto
-          </Button>
-        </Box>
+        <ListPageHeader
+          model="produto"
+          title="Produtos"
+          ButtonLabel="Adicionar produto"
+          onClickButton={() => navigate('/produtos/adicionar')}
+        />
         <TableContainer marginTop={16}>
           <Table variant="simple">
             <TableCaption>Produtos cadastrados</TableCaption>
@@ -146,23 +144,11 @@ export default function Produtos() {
                   <Td>{formatValor(produto.valor.toFixed(2).toString())}</Td>
                   <Td>{produto.estoque}</Td>
                   <Td>
-                    <Flex>
-                      <FiEdit
-                        fontSize={20}
-                        color="#ED64A6"
-                        cursor="pointer"
-                        onClick={() => handleClickEditProduto(produto.id)}
-                        style={{
-                          marginRight: 8,
-                        }}
-                      />
-                      <FiTrash
-                        fontSize={20}
-                        color="#FC5050"
-                        cursor="pointer"
-                        onClick={() => handleClickDeleteProduto(produto)}
-                      />
-                    </Flex>
+                    <TableRowActions
+                      model="produto"
+                      onClickView={() => handleClickEditProduto(produto.id)}
+                      onClickDelete={() => handleClickDeleteProduto(produto)}
+                    />
                   </Td>
                 </Tr>
               ))}

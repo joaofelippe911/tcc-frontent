@@ -2,9 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
-  Button,
-  Flex,
-  Heading,
   Table,
   TableCaption,
   TableContainer,
@@ -15,12 +12,13 @@ import {
   Tr,
   useToast,
 } from '@chakra-ui/react';
-import { FiEdit, FiTrash } from 'react-icons/fi';
 
 import { httpClient } from '../../services/HttpClient';
 import { AxiosError } from 'axios';
 import Modal from '../../components/Modal';
 import Spinner from '../../components/Spinner';
+import TableRowActions from '../../components/TableRowActions';
+import ListPageHeader from '../../components/ListPageHeader';
 
 export default function Funcao() {
   const [isLoading, setIsLoading] = useState(false);
@@ -123,12 +121,12 @@ export default function Funcao() {
     >
       <Spinner spinning={isLoading} />
       <Box p={4}>
-        <Box display="flex" alignItems="center" justifyContent="space-between">
-          <Heading>Funções</Heading>
-          <Button onClick={() => navigate('/funcoes/adicionar')}>
-            Adicionar função
-          </Button>
-        </Box>
+        <ListPageHeader
+          model="funcao"
+          title="Funções"
+          ButtonLabel="Adicionar função"
+          onClickButton={() => navigate('/funcoes/adicionar')}
+        />
         <TableContainer marginTop={16}>
           <Table variant="simple">
             <TableCaption>Funções cadastradas</TableCaption>
@@ -143,23 +141,11 @@ export default function Funcao() {
                 <Tr key={funcao.id}>
                   <Td>{funcao.nome}</Td>
                   <Td>
-                    <Flex>
-                      <FiEdit
-                        fontSize={20}
-                        color="#ED64A6"
-                        cursor="pointer"
-                        onClick={() => handleClickEditFuncao(funcao.id)}
-                        style={{
-                          marginRight: 8,
-                        }}
-                      />
-                      <FiTrash
-                        fontSize={20}
-                        color="#FC5050"
-                        cursor="pointer"
-                        onClick={() => handleClickDeleteFuncao(funcao)}
-                      />
-                    </Flex>
+                    <TableRowActions
+                      model="funcao"
+                      onClickView={() => handleClickEditFuncao(funcao.id)}
+                      onClickDelete={() => handleClickDeleteFuncao(funcao)}
+                    />
                   </Td>
                 </Tr>
               ))}

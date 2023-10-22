@@ -25,15 +25,17 @@ import AppRoutes from '../../routes/AppRoutes';
 import { useAuthContext } from '../../contexts/AuthContext';
 
 const LinkItems = [
-  { name: 'Home', icon: FiHome, path: '/' },
-  { name: 'Clientes', icon: FiUsers, path: '/clientes' },
-  { name: 'Colaboradores', icon: FiUsers, path: '/colaboradores' },
-  { name: 'Funções', icon: FiUsers, path: '/funcoes' },
-  { name: 'Fornecedores', icon: FiUsers, path: '/fornecedores' },
-  { name: 'Produtos', icon: FiUsers, path: '/produtos' },
+  { name: 'Home', icon: FiHome, path: '/', dontNeedPermission: true },
+  { name: 'Clientes', icon: FiUsers, path: '/clientes', permission: 'cliente-index' },
+  { name: 'Colaboradores', icon: FiUsers, path: '/colaboradores', permission: 'colaborador-index' },
+  { name: 'Funções', icon: FiUsers, path: '/funcoes', permission: 'funcao-index' },
+  { name: 'Fornecedores', icon: FiUsers, path: '/fornecedores', permission: 'fornecedor-index' },
+  { name: 'Produtos', icon: FiUsers, path: '/produtos', permission: 'produto-index' },
 ];
 
 const SidebarContent = ({ onClose, ...rest }) => {
+  const { user } = useAuthContext();
+
   return (
     <Box
       transition="3s ease"
@@ -54,11 +56,17 @@ const SidebarContent = ({ onClose, ...rest }) => {
           />
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
-      {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon} path={link.path}>
-          {link.name}
-        </NavItem>
-      ))}
+      {LinkItems.map((link) => {
+        if (!link.dontNeedPermission && !user.funcao.permissoes.find((permission) => permission.nome === link.permission)) {
+          return null;
+        }
+
+        return (
+          <NavItem key={link.name} icon={link.icon} path={link.path}>
+            {link.name}
+          </NavItem>
+        )
+      })}
     </Box>
   );
 };

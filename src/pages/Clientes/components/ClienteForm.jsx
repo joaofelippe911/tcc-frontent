@@ -5,12 +5,13 @@ import {
   FormLabel,
   Input,
 } from '@chakra-ui/react';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import useErrors from '../../../hooks/useErrors';
 import isEmailValid from '../../../utils/isEmailValid';
 import { formatCpf } from '../../../utils/formatCpf';
 import { onlyNumbers } from '../../../utils/onlyNumbers';
 import formatPhone from '../../../utils/formatPhone';
+import { useAuthContext } from '../../../contexts/AuthContext';
 
 export function ClienteForm({ onSubmit, cliente = undefined }) {
   const [nome, setNome] = useState(cliente?.nome || '');
@@ -19,6 +20,18 @@ export function ClienteForm({ onSubmit, cliente = undefined }) {
   const [cpf, setCpf] = useState(cliente?.cpf ? formatCpf(cliente.cpf) : '');
   const [telefone, setTelefone] = useState(cliente?.telefone ? formatPhone(cliente.telefone) : '');
   const [isSubmiting, setIsSubmiting] = useState(false);
+
+  const { user } = useAuthContext();
+
+  const canEdit = useMemo(() => {
+    if (!cliente) {
+      return true;
+    }
+
+    const hasPermission = user.funcao.permissoes.find(permission => permission.nome === 'cliente-update');
+
+    return Boolean(hasPermission);
+  }, [cliente, user]);
 
   const { setError, removeError, errors, getErrorMessageByFieldName } =
     useErrors();
@@ -229,7 +242,7 @@ export function ClienteForm({ onSubmit, cliente = undefined }) {
         width="full"
         mt={4}
         type="submit"
-        isDisabled={isSubmiting || !isFormValid}
+        isDisabled={isSubmiting || !isFormValid || !canEdit}
         isLoading={isSubmiting}
       >
         Salvar

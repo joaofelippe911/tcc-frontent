@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -23,6 +23,7 @@ import { formatCpf } from '../../utils/formatCpf';
 import { AxiosError } from 'axios';
 import Modal from '../../components/Modal';
 import Spinner from '../../components/Spinner';
+import { useAuthContext } from '../../contexts/AuthContext';
 
 export default function Clientes() {
   const [clientes, setClientes] = useState([]);
@@ -34,18 +35,39 @@ export default function Clientes() {
 
   const navigate = useNavigate();
   const toast = useToast();
+  const { user } = useAuthContext();
+
+  const canView = useMemo(() => {
+    const hasPermission = user.funcao.permissoes.find(permission => permission.nome === 'cliente-show');
+
+    return Boolean(hasPermission);
+  }, [user]);
+
+  const canDelete = useMemo(() => {
+    const hasPermission = user.funcao.permissoes.find(permission => permission.nome === 'cliente-destroy');
+
+    return Boolean(hasPermission);
+  }, [user]);
 
   const handleClickEditCliente = useCallback(
     (id) => {
+      if (!canView) {
+        return;
+      }
+
       navigate(`/clientes/editar/${id}`);
     },
-    [navigate]
+    [navigate, canView]
   );
 
   const handleClickDeleteCliente = useCallback((cliente) => {
+    if (!canDelete) {
+      return;
+    }
+
     setClienteBeingDelete(cliente);
     setIsDeleteClienteModalVisible(true);
-  }, []);
+  }, [canDelete]);
 
   const handleConfirmDeleteCliente = useCallback(async () => {
     try {
@@ -153,17 +175,23 @@ export default function Clientes() {
                       <FiEdit
                         fontSize={20}
                         color="#ED64A6"
-                        cursor="pointer"
+                        cursor={canView ? "pointer" : "default"}
                         onClick={() => handleClickEditCliente(cliente.id)}
                         style={{
                           marginRight: 8,
+                          opacity: canView ? 1 : .5,
+                          cursor: !canView ? 'not-allowed' : undefined,
                         }}
                       />
                       <FiTrash
                         fontSize={20}
                         color="#FC5050"
-                        cursor="pointer"
+                        cursor={canDelete ? "pointer" : "default"}
                         onClick={() => handleClickDeleteCliente(cliente)}
+                        style={{
+                          opacity: canDelete ? 1 : .5,
+                          cursor: !canDelete ? 'not-allowed' : undefined,
+                        }}
                       />
                     </Flex>
                   </Td>

@@ -14,17 +14,26 @@ import EditFornecedor from '../pages/Fornecedores/EditFornecedor';
 import NewFornecedor from '../pages/Fornecedores/NewFornecedor';
 import Produtos from '../pages/Produtos';
 import EditProdutos from '../pages/Produtos/EditProduto';
-import NewProdutos from '../pages/Produtos/NewProduto';
 import NewProduto from '../pages/Produtos/NewProduto';
+import Unauthorized from '../pages/Unauthorized';
+import RequireAuthorization from './RequireAuthorization';
 
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
 
-      <Route path="/clientes" element={<Clientes />} />
-      <Route path="/clientes/adicionar" element={<NewCliente />} />
-      <Route path="/clientes/editar/:id" element={<EditCliente />} />
+      <Route element={<RequireAuthorization allowedPermissions={['cliente-index']} />}>
+        <Route path="/clientes" element={<Clientes />} />
+      </Route>
+
+      <Route element={<RequireAuthorization allowedPermissions={['cliente-store']} />}>
+        <Route path="/clientes/adicionar" element={<NewCliente />} />
+      </Route>
+
+      <Route element={<RequireAuthorization allowedPermissions={['cliente-show']} />}>
+        <Route path="/clientes/editar/:id" element={<EditCliente />} />
+      </Route>
 
       <Route path="/colaboradores" element={<Colaboradores />} />
       <Route path="/colaboradores/adicionar" element={<NewColaborador />} />
@@ -41,6 +50,8 @@ export default function AppRoutes() {
       <Route path="/produtos" element={<Produtos />} />
       <Route path="/produtos/adicionar" element={<NewProduto />} />
       <Route path="/produtos/editar/:id" element={<EditProdutos />} />
+
+      <Route path="/inautorizado" element={<Unauthorized />} />
     </Routes>
   );
 }

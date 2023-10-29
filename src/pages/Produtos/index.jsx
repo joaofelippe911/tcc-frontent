@@ -133,7 +133,6 @@ export default function Produtos() {
                 <Th>Nome</Th>
                 <Th>Valor</Th>
                 <Th>Estoque</Th>
-                <Th>Imagem</Th>
                 <Th>Ações</Th>
               </Tr>
             </Thead>

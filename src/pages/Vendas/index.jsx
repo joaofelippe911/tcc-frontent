@@ -167,7 +167,7 @@ export default function Vendas() {
         </TableContainer>
         <Modal
           open={isDeleteVendaModalVisible}
-          title={`Deseja realmente deletar "${vendaBeingDeleted?.nome}"`}
+          title={`Deseja realmente deletar a venda realizada para o cliente "${vendaBeingDeleted?.cliente.nome}" no valor de ${formatValor(vendaBeingDeleted?.valor_total?.toString())}?`}
           onConfirm={handleConfirmDeleteVenda}
           confirmText="Deletar"
           onCancel={handleClickCancelDeleteVenda}

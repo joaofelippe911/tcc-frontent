@@ -1,8 +1,10 @@
 import {
+  Box,
   Button,
   FormControl,
   FormErrorMessage,
   FormLabel,
+  Heading,
   Input,
   ScaleFade,
   Select,
@@ -21,11 +23,7 @@ import useErrors from '../../../hooks/useErrors';
 import { httpClient } from '../../../services/HttpClient';
 import { AxiosError } from 'axios';
 import { formatValor } from '../../../utils/formatValor';
-import {
-  FiMinusSquare,
-  FiPlusSquare,
-  FiX,
-} from 'react-icons/fi';
+import { FiMinusSquare, FiPlusSquare, FiX } from 'react-icons/fi';
 import { onlyNumbers } from '../../../utils/onlyNumbers';
 
 export function VendaForm({ onSubmit, colaborador: venda = undefined }) {
@@ -216,35 +214,43 @@ export function VendaForm({ onSubmit, colaborador: venda = undefined }) {
         return;
       }
 
+      const numberId = Number(e.target.value);
+
       setProdutosAdicionados((prevState) => {
         const produtoAlreadyExists = prevState.find(
-          (produto) => produto.id === e.target.value
+          (produto) => produto.id === numberId
         );
 
         if (produtoAlreadyExists) {
+          const existingIndex = prevState.findIndex(
+            (produto) => produto.id === produtoAlreadyExists.id
+          );
           highlightProduto(
-            prevState.findIndex(
-              (produto) => produto.id === produtoAlreadyExists.id
-            )
+            existingIndex < produtoIndex ? existingIndex : existingIndex - 1
           );
           return prevState.filter((p, index) => index !== produtoIndex);
         }
 
         const newProdutosAdicionados = prevState.map((produto, index) => {
+          const newObject = Object.assign({}, produto);
+
+          const valorProduto = produtos.find((p) => p.id === numberId)?.valor;
+
           if (index === produtoIndex) {
             return {
-              ...produto,
-              id: e.target.value,
+              ...newObject,
+              id: numberId,
+              valor: valorProduto,
             };
           }
 
-          return produto;
+          return newObject;
         });
 
         return newProdutosAdicionados;
       });
     },
-    [highlightProduto]
+    [highlightProduto, produtos]
   );
 
   const handleClickRemoveProduto = useCallback((produtoIndex) => {
@@ -255,6 +261,17 @@ export function VendaForm({ onSubmit, colaborador: venda = undefined }) {
 
   const produtosAdicionadosValidos = useMemo(() => {
     return produtosAdicionados.filter((produto) => Boolean(produto.id));
+  }, [produtosAdicionados]);
+
+  const valorTotal = useMemo(() => {
+    let valor = 0;
+
+    console.log({ produtosAdicionados });
+    produtosAdicionados.forEach(
+      (produto) => (valor += produto.valor * produto.quantidade)
+    );
+
+    return valor;
   }, [produtosAdicionados]);
 
   // const handleEmailChange = useCallback(
@@ -347,9 +364,6 @@ export function VendaForm({ onSubmit, colaborador: venda = undefined }) {
   }, [toast]);
 
   const isFormValid =
-    // nome &&
-    // cpf &&
-    // telefone &&
     cliente_id &&
     // email &&
     // (venda || password) &&
@@ -357,307 +371,192 @@ export function VendaForm({ onSubmit, colaborador: venda = undefined }) {
     errors.length === 0;
 
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        {/* <FormControl isInvalid={Boolean(getErrorMessageByFieldName('nome'))}>
-          <FormLabel>Nome completo</FormLabel>
-          <Input
-            type="text"
-            name="nome"
-            value={nome}
-            onChange={handleNomeChange}
-            placeholder="Digite o nome completo do colaborador"
-          />
-          {Boolean(getErrorMessageByFieldName('nome')) && (
-            <FormErrorMessage>
-              {getErrorMessageByFieldName('nome')}
-            </FormErrorMessage>
-          )}
-        </FormControl>
-
-        <FormControl
-          marginTop={4}
-          isInvalid={Boolean(getErrorMessageByFieldName('cpf'))}
+    <form onSubmit={handleSubmit}>
+      <FormControl
+        marginTop={4}
+        isInvalid={Boolean(getErrorMessageByFieldName('cliente'))}
+      >
+        <FormLabel>Cliente</FormLabel>
+        <Select
+          placeholder="Selecione o cliente"
+          onChange={handleClienteChange}
+          value={cliente_id}
+          _loading={isLoadingClientes}
         >
-          <FormLabel>CPF</FormLabel>
-          <Input
-            type="text"
-            name="cpf"
-            value={cpf}
-            onChange={handleCpfChange}
-            placeholder="Digite o CPF do colaborador"
-          />
-          {Boolean(getErrorMessageByFieldName('cpf')) && (
-            <FormErrorMessage>
-              {getErrorMessageByFieldName('cpf')}
-            </FormErrorMessage>
-          )}
-        </FormControl>
+          {clientes.map((cliente) => (
+            <option value={cliente.id} key={cliente.id}>
+              {cliente.nome}
+            </option>
+          ))}
+        </Select>
+        {Boolean(getErrorMessageByFieldName('cliente')) && (
+          <FormErrorMessage>
+            {getErrorMessageByFieldName('cliente')}
+          </FormErrorMessage>
+        )}
+      </FormControl>
 
-        <FormControl
-          marginTop={4}
-          isInvalid={Boolean(getErrorMessageByFieldName('telefone'))}
-        >
-          <FormLabel>Telefone</FormLabel>
-          <Input
-            type="text"
-            name="telefone"
-            value={telefone}
-            onChange={handleTelefoneChange}
-            placeholder="Digite o telefone do colaborador"
-            maxLength={15}
-          />
-          {Boolean(getErrorMessageByFieldName('telefone')) && (
-            <FormErrorMessage>
-              {getErrorMessageByFieldName('telefone')}
-            </FormErrorMessage>
-          )}
-        </FormControl> */}
-
-        <FormControl
-          marginTop={4}
-          isInvalid={Boolean(getErrorMessageByFieldName('cliente'))}
-        >
-          <FormLabel>Cliente</FormLabel>
-          <Select
-            placeholder="Selecione o cliente"
-            onChange={handleClienteChange}
-            value={cliente_id}
-            _loading={isLoadingClientes}
-          >
-            {clientes.map((cliente) => (
-              <option value={cliente.id} key={cliente.id}>
-                {cliente.nome}
-              </option>
-            ))}
-          </Select>
-          {Boolean(getErrorMessageByFieldName('cliente')) && (
-            <FormErrorMessage>
-              {getErrorMessageByFieldName('cliente')}
-            </FormErrorMessage>
-          )}
-        </FormControl>
-
-        <TableContainer marginTop={16}>
-          <Table variant="simple">
-            <TableCaption>
-              <Button onClick={handleClickAddProduto} variant="ghost">
-                Adicionar produto
-              </Button>
-            </TableCaption>
-            <Thead>
-              <Tr>
-                <Th>Nome</Th>
-                <Th>Valor Unidade</Th>
-                <Th>Quantidade</Th>
-                <Th>Sub Total</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {produtosAdicionados.map((produto, index) => {
-                const produtoData = produtos.find(
-                  (p) => p.id === Number(produto.id)
-                );
-
-                const totalValue =
-                  (produtoData?.valor || 0) * Number(produto.quantidade);
-                const isBeingHighlighted =
-                  indexProdutosBeingHighlighted.includes(index);
-
-                return (
-                  <Tr
-                    key={`produto-${produto.id}-${index}`}
-                    borderBottom="1px"
-                    borderBottomColor="#2D3748"
-                    backgroundColor={isBeingHighlighted ? '#ED64A6' : undefined}
-                    transition="all .5"
-                  >
-                    <Td borderBottom="0">
-                      <ScaleFade initialScale={0.5} in={true}>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <FiX
-                            fontSize={20}
-                            color={isBeingHighlighted ? '#FFFFFF' : '#FC5050'}
-                            cursor={'pointer'}
-                            onClick={() => handleClickRemoveProduto(index)}
-                            style={{
-                              marginRight: 8,
-                            }}
-                          />
-                          <Select
-                            placeholder="Selecione o produto"
-                            onChange={(e) => handleProdutoIdChange(e, index)}
-                            value={produto.id}
-                            _loading={isLoadingProdutos}
-                            disabled={produto.id}
-                          >
-                            {produtos.map((p) => (
-                              <option value={p.id} key={p.id}>
-                                {p.nome}
-                              </option>
-                            ))}
-                          </Select>
-                        </div>
-                      </ScaleFade>
-                    </Td>
-                    <Td>
-                      <ScaleFade initialScale={0.5} in={true}>
-                        {formatValor(
-                          produtoData?.valor.toFixed(2).toString()
-                        ) || 'R$ 0,00'}
-                      </ScaleFade>
-                    </Td>
-                    <Td borderBottom="0">
-                      <ScaleFade initialScale={0.5} in={true}>
-                        <div
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <Button
-                            variant="unstyled"
-                            padding="0"
-                            minWidth={0}
-                            marginRight={2}
-                          >
-                            <FiMinusSquare
-                              fontSize={20}
-                              color={isBeingHighlighted ? '#FFFFFF' : '#8FACC0'}
-                              cursor={'pointer'}
-                              onClick={() =>
-                                handleClickRemoveOneFromQuantidade(index)
-                              }
-                            />
-                          </Button>
-                          <Input
-                            type="text"
-                            name="quantidade"
-                            value={produto.quantidade}
-                            onChange={(e) =>
-                              handleProdutoQuantidadeChange(e, index)
-                            }
-                            maxLength={5}
-                            borderColor={
-                              isBeingHighlighted ? '#FFFFFF' : '#2D3748'
-                            }
-                            borderBottomColor={
-                              isBeingHighlighted ? '#FFFFFF' : '#2D3748'
-                            }
-                            focusBorderColor={
-                              isBeingHighlighted ? '#FFFFFF' : undefined
-                            }
-                            autoComplete="off"
-                            maxWidth="20"
-                          />
-                          <Button
-                            variant="unstyled"
-                            padding="0"
-                            minWidth={0}
-                            marginLeft={2}
-                          >
-                            <FiPlusSquare
-                              fontSize={20}
-                              color={isBeingHighlighted ? '#FFFFFF' : '#8FACC0'}
-                              cursor={'pointer'}
-                              onClick={() =>
-                                handleClickAddOneToQuantidade(index)
-                              }
-                            />
-                          </Button>
-                        </div>
-                      </ScaleFade>
-                    </Td>
-                    <Td>
-                      <ScaleFade initialScale={0.5} in={true}>
-                        {formatValor(totalValue.toFixed(2).toString())}
-                      </ScaleFade>
-                    </Td>
-                  </Tr>
-                );
-              })}
-            </Tbody>
-          </Table>
-        </TableContainer>
-
-        {/* <FormControl
-          marginTop={4}
-          isInvalid={Boolean(getErrorMessageByFieldName('email'))}
-        >
-          <FormLabel>Email</FormLabel>
-          <Input
-            type="email"
-            name="email"
-            value={email}
-            onChange={handleEmailChange}
-            placeholder="exemplo@exemplo.com"
-          />
-          {Boolean(getErrorMessageByFieldName('email')) && (
-            <FormErrorMessage>
-              {getErrorMessageByFieldName('email')}
-            </FormErrorMessage>
-          )}
-        </FormControl> */}
-
-        {/* {!venda && (
-          <FormControl
-            marginTop={4}
-            isInvalid={Boolean(getErrorMessageByFieldName('password'))}
-          >
-            <FormLabel>Senha</FormLabel>
-            <Input
-              type="password"
-              name="password"
-              value={password}
-              onChange={handlePasswordChange}
-              placeholder="Digite uma senha válida"
-            />
-            {Boolean(getErrorMessageByFieldName('password')) && (
-              <FormErrorMessage>
-                {getErrorMessageByFieldName('password')}
-              </FormErrorMessage>
-            )}
-          </FormControl>
-        )} */}
-
-        {/* {
-          venda && (
-            <Button
-              variant="ghost"
-              mt={4}
-              type="button"
-              isDisabled={isSubmiting}
-              onClick={() => setIsChangePasswordModalVisible(true)}
-            >
-              Alterar senha
+      <TableContainer marginTop={16}>
+        <Table variant="simple">
+          <TableCaption>
+            <Button onClick={handleClickAddProduto} variant="ghost">
+              Adicionar produto
             </Button>
-          )
-        } */}
+          </TableCaption>
+          <Thead>
+            <Tr>
+              <Th>Nome</Th>
+              <Th>Valor Unidade</Th>
+              <Th>Quantidade</Th>
+              <Th>Sub Total</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {produtosAdicionados.map((produto, index) => {
+              const produtoData = produtos.find(
+                (p) => p.id === Number(produto.id)
+              );
 
-        <Button
-          width="full"
-          mt={4}
-          type="submit"
-          isDisabled={isSubmiting || !isFormValid}
-          isLoading={isSubmiting}
-        >
-          Salvar
-        </Button>
-      </form>
-      {/* {
-        isChangePasswordModalVisible && (
-          <ChangePasswordModal
-            onCancel={() => setIsChangePasswordModalVisible(false)}
-            colaboradorId={venda?.id}
-            afterSubmit={() => setIsChangePasswordModalVisible(false)}
-          />
-        )
-      } */}
-    </>
+              const totalValue =
+                (produtoData?.valor || 0) * Number(produto.quantidade);
+              const isBeingHighlighted =
+                indexProdutosBeingHighlighted.includes(index);
+
+              return (
+                <Tr
+                  key={`produto-${index}`}
+                  borderBottom="1px"
+                  borderBottomColor="#2D3748"
+                  backgroundColor={isBeingHighlighted ? '#ED64A6' : undefined}
+                  transition="all .4s"
+                >
+                  <Td borderBottom="0">
+                    <ScaleFade initialScale={0.5} in={true}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <FiX
+                          fontSize={20}
+                          color={isBeingHighlighted ? '#FFFFFF' : '#FC5050'}
+                          cursor={'pointer'}
+                          onClick={() => handleClickRemoveProduto(index)}
+                          style={{
+                            marginRight: 8,
+                          }}
+                        />
+                        <Select
+                          placeholder="Selecione o produto"
+                          onChange={(e) => handleProdutoIdChange(e, index)}
+                          value={produto.id || ''}
+                          _loading={isLoadingProdutos}
+                          disabled={produto.id || ''}
+                          key={`select-produto-${produto.id}`}
+                        >
+                          {produtos.map((p) => (
+                            <option value={p.id} key={p.id}>
+                              {p.nome}
+                            </option>
+                          ))}
+                        </Select>
+                      </div>
+                    </ScaleFade>
+                  </Td>
+                  <Td>
+                    <ScaleFade initialScale={0.5} in={true}>
+                      {formatValor(produtoData?.valor.toFixed(2).toString()) ||
+                        'R$ 0,00'}
+                    </ScaleFade>
+                  </Td>
+                  <Td borderBottom="0">
+                    <ScaleFade initialScale={0.5} in={true}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Button
+                          variant="unstyled"
+                          padding="0"
+                          minWidth={0}
+                          marginRight={2}
+                        >
+                          <FiMinusSquare
+                            fontSize={20}
+                            color={isBeingHighlighted ? '#FFFFFF' : '#8FACC0'}
+                            cursor={'pointer'}
+                            onClick={() =>
+                              handleClickRemoveOneFromQuantidade(index)
+                            }
+                          />
+                        </Button>
+                        <Input
+                          type="text"
+                          name="quantidade"
+                          value={produto.quantidade}
+                          onChange={(e) =>
+                            handleProdutoQuantidadeChange(e, index)
+                          }
+                          maxLength={5}
+                          borderColor={
+                            isBeingHighlighted ? '#FFFFFF' : '#2D3748'
+                          }
+                          borderBottomColor={
+                            isBeingHighlighted ? '#FFFFFF' : '#2D3748'
+                          }
+                          focusBorderColor={
+                            isBeingHighlighted ? '#FFFFFF' : undefined
+                          }
+                          autoComplete="off"
+                          maxWidth="20"
+                        />
+                        <Button
+                          variant="unstyled"
+                          padding="0"
+                          minWidth={0}
+                          marginLeft={2}
+                        >
+                          <FiPlusSquare
+                            fontSize={20}
+                            color={isBeingHighlighted ? '#FFFFFF' : '#8FACC0'}
+                            cursor={'pointer'}
+                            onClick={() => handleClickAddOneToQuantidade(index)}
+                          />
+                        </Button>
+                      </div>
+                    </ScaleFade>
+                  </Td>
+                  <Td>
+                    <ScaleFade initialScale={0.5} in={true}>
+                      {formatValor(totalValue.toFixed(2).toString())}
+                    </ScaleFade>
+                  </Td>
+                </Tr>
+              );
+            })}
+          </Tbody>
+        </Table>
+      </TableContainer>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="flex-end"
+        padding={4}
+      >
+        <Heading as="h4" size="md">Valor Total: {formatValor(valorTotal.toFixed(2).toString())}</Heading>
+      </Box>
+      <Button
+        width="full"
+        mt={4}
+        type="submit"
+        isDisabled={isSubmiting || !isFormValid}
+        isLoading={isSubmiting}
+      >
+        Salvar
+      </Button>
+    </form>
   );
 }

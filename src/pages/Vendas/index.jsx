@@ -134,6 +134,7 @@ export default function Vendas() {
                 <Th>Cliente</Th>
                 <Th>Valor</Th>
                 <Th>Quantidade Produtos</Th>
+                <Th>Método Pagamento</Th>
                 <Th>Data</Th>
                 <Th>Ações</Th>
               </Tr>
@@ -151,6 +152,7 @@ export default function Vendas() {
                     <Td>{venda.cliente.nome}</Td>
                     <Td>{formatValor(venda.valor_total.toFixed(2).toString())}</Td>
                     <Td>{quantidadeProdutos}</Td>
+                    <Td>{venda.metodo_pagamento}</Td>
                     <Td>{formatDateStringToDateAndTime(venda.created_at)}</Td>
                     <Td>
                       <TableRowActions
@@ -167,7 +169,7 @@ export default function Vendas() {
         </TableContainer>
         <Modal
           open={isDeleteVendaModalVisible}
-          title={`Deseja realmente deletar a venda realizada para o cliente "${vendaBeingDeleted?.cliente.nome}" no valor de ${formatValor(vendaBeingDeleted?.valor_total?.toString())}?`}
+          title={`Deseja realmente deletar a venda realizada para o cliente "${vendaBeingDeleted?.cliente.nome}" no valor de ${formatValor(vendaBeingDeleted?.valor_total?.toFixed(2)?.toString())}?`}
           onConfirm={handleConfirmDeleteVenda}
           confirmText="Deletar"
           onCancel={handleClickCancelDeleteVenda}

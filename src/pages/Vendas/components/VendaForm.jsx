@@ -26,46 +26,27 @@ import { formatValor } from '../../../utils/formatValor';
 import { FiMinusSquare, FiPlusSquare, FiX } from 'react-icons/fi';
 import { onlyNumbers } from '../../../utils/onlyNumbers';
 
-export function VendaForm({ onSubmit, colaborador: venda = undefined }) {
-  // const [nome, setNome] = useState(venda?.nome || '');
-  // const [cpf, setCpf] = useState(venda?.cpf ? formatCpf(venda.cpf) : '');
-  // const [telefone, setTelefone] = useState(venda?.telefone ? formatPhone(venda.telefone) : '');
-  const [cliente_id, setCliente] = useState(venda?.cliente_id || '');
+function mapProdutos(produtos) {
+  return produtos.map((produto) => ({ ...produto, quantidade: produto.pivot.quantidade }));
+}
+
+export function VendaForm({ onSubmit, venda = undefined }) {
+  const [cliente, setCliente] = useState(venda?.cliente_id || '');
+  const [metodoPagamento, setMetodoPagamento] = useState(venda?.metodo_pagamento || '');
   const [isSubmiting, setIsSubmiting] = useState(false);
   const [clientes, setClientes] = useState([]);
   const [produtos, setProdutos] = useState([]);
-  const [produtosAdicionados, setProdutosAdicionados] = useState([]);
+  const [metodosPagamento, setMetodosPagamento] = useState([]);
+  const [produtosAdicionados, setProdutosAdicionados] = useState(venda?.produtos ? mapProdutos(venda.produtos) : []);
   const [isLoadingClientes, setIsLoadingClientes] = useState(false);
   const [isLoadingProdutos, setIsLoadingProdutos] = useState(false);
+  const [isLoadingMetodosPagamento, setIsLoadingMetodosPagamento] = useState(false);
   const [indexProdutosBeingHighlighted, setIndexProdutosBeingHighlighted] =
     useState([]);
-  // const [email, setEmail] = useState(venda?.email || '');
-  // const [password, setPassowrd] = useState(venda?.password || '');
-  // const [isChangePasswordModalVisible, setIsChangePasswordModalVisible] = useState(false);
 
   const toast = useToast();
   const { setError, removeError, errors, getErrorMessageByFieldName } =
     useErrors();
-
-  const handleSubmit = useCallback(
-    async (e) => {
-      e.preventDefault();
-
-      setIsSubmiting(true);
-
-      await onSubmit({
-        // nome,
-        // cpf: onlyNumbers(cpf),
-        // telefone: onlyNumbers(telefone),
-        cliente_id,
-        // email,
-        // password,
-      });
-
-      setIsSubmiting(false);
-    },
-    [onSubmit, cliente_id]
-  );
 
   const handleClickAddProduto = useCallback(() => {
     setProdutosAdicionados((prevState) => [
@@ -77,58 +58,6 @@ export function VendaForm({ onSubmit, colaborador: venda = undefined }) {
       },
     ]);
   }, []);
-
-  // const handleNomeChange = useCallback(
-  //   (e) => {
-  //     setNome(e.target.value);
-
-  //     if (!e.target.value) {
-  //       setError({ field: 'nome', message: 'Nome é obrigatório!' });
-  //       return;
-  //     }
-
-  //     removeError('nome');
-  //   },
-  //   [setError, removeError]
-  // );
-
-  // const handleCpfChange = useCallback(
-  //   (e) => {
-  //     setCpf(formatCpf(e.target.value));
-
-  //     if (!e.target.value) {
-  //       setError({ field: 'cpf', message: 'CPF é obrigatório!' });
-  //       return;
-  //     }
-
-  //     if (onlyNumbers(e.target.value).length < 11) {
-  //       setError({ field: 'cpf', message: 'CPF inválido!' });
-  //       return;
-  //     }
-
-  //     removeError('cpf');
-  //   },
-  //   [setError, removeError]
-  // );
-
-  // const handleTelefoneChange = useCallback(
-  //   (e) => {
-  //     setTelefone(formatPhone(e.target.value));
-
-  //     if (!e.target.value) {
-  //       setError({ field: 'telefone', message: 'Telefone é obrigatório!' });
-  //       return;
-  //     }
-
-  //     if (onlyNumbers(e.target.value).length < 11) {
-  //       setError({ field: 'telefone', message: 'Telefone inválido!' });
-  //       return;
-  //     }
-
-  //     removeError('telefone');
-  //   },
-  //   [setError, removeError]
-  // );
 
   const highlightProduto = useCallback((index) => {
     setIndexProdutosBeingHighlighted((prevState) => [...prevState, index]);
@@ -150,6 +79,20 @@ export function VendaForm({ onSubmit, colaborador: venda = undefined }) {
       }
 
       removeError('cliente');
+    },
+    [setError, removeError]
+  );
+
+  const handleMetodoPagamentoChange = useCallback(
+    (e) => {
+      setMetodoPagamento(e.target.value);
+
+      if (!e.target.value) {
+        setError({ field: 'metodo_pagamento', message: 'Método de pagamento é obrigatório!' });
+        return;
+      }
+
+      removeError('metodo_pagamento');
     },
     [setError, removeError]
   );
@@ -274,43 +217,23 @@ export function VendaForm({ onSubmit, colaborador: venda = undefined }) {
     return valor;
   }, [produtosAdicionados]);
 
-  // const handleEmailChange = useCallback(
-  //   (e) => {
-  //     setEmail(e.target.value);
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
 
-  //     if (!e.target.value) {
-  //       setError({ field: 'email', message: 'Email é obrigatório!' });
-  //       return;
-  //     }
+      setIsSubmiting(true);
 
-  //     if (!isEmailValid(e.target.value)) {
-  //       setError({ field: 'email', message: 'Email inválido!' });
-  //       return;
-  //     }
+      await onSubmit({
+        cliente_id: cliente,
+        produtos: produtosAdicionadosValidos,
+        valor_total: valorTotal,
+        metodo_pagamento: metodoPagamento,
+      });
 
-  //     removeError('email');
-  //   },
-  //   [setError, removeError]
-  // );
-
-  // const handlePasswordChange = useCallback(
-  //   (e) => {
-  //     setPassowrd(e.target.value);
-
-  //     if (!e.target.value) {
-  //       setError({ field: 'password', message: 'Senha é obrigatório!' });
-  //       return;
-  //     }
-
-  //     if (!isPasswordValid(e.target.value)) {
-  //       setError({ field: 'password', message: 'A senha precisa ter entre 8 e 20 caracteres, conter pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial!' });
-  //       return;
-  //     }
-
-  //     removeError('password');
-  //   },
-  //   [setError, removeError]
-  // );
+      setIsSubmiting(false);
+    },
+    [onSubmit, cliente, produtosAdicionadosValidos, valorTotal, metodoPagamento]
+  );
 
   useEffect(() => {
     async function loadClientes() {
@@ -359,14 +282,37 @@ export function VendaForm({ onSubmit, colaborador: venda = undefined }) {
       }
     }
 
+    async function loadMetodosPagameto() {
+      try {
+        setIsLoadingMetodosPagamento(true);
+        const { data } = await httpClient.get('/metodos_pagamento');
+
+        setMetodosPagamento(data);
+        setIsLoadingMetodosPagamento(false);
+      } catch (err) {
+        if (err instanceof AxiosError && err.name === 'CanceledError') {
+          return;
+        }
+
+        setIsLoadingMetodosPagamento(false);
+        toast({
+          title: err.response.data.message || 'Erro ao carregar métodos de pagamento!',
+          status: 'error',
+          duration: 10000,
+          isClosable: true,
+          position: 'top-right',
+        });
+      }
+    }
+
     loadClientes();
     loadProdutos();
+    loadMetodosPagameto();
   }, [toast]);
 
   const isFormValid =
-    cliente_id &&
-    // email &&
-    // (venda || password) &&
+    cliente &&
+    metodoPagamento &&
     produtosAdicionadosValidos.length > 0 &&
     errors.length === 0;
 
@@ -380,7 +326,7 @@ export function VendaForm({ onSubmit, colaborador: venda = undefined }) {
         <Select
           placeholder="Selecione o cliente"
           onChange={handleClienteChange}
-          value={cliente_id}
+          value={cliente}
           _loading={isLoadingClientes}
         >
           {clientes.map((cliente) => (
@@ -548,6 +494,31 @@ export function VendaForm({ onSubmit, colaborador: venda = undefined }) {
       >
         <Heading as="h4" size="md">Valor Total: {formatValor(valorTotal.toFixed(2).toString())}</Heading>
       </Box>
+
+      <FormControl
+        marginTop={4}
+        isInvalid={Boolean(getErrorMessageByFieldName('metodo_pagamento'))}
+      >
+        <FormLabel>Método de Pagamento</FormLabel>
+        <Select
+          placeholder="Selecione o método de pagamento"
+          onChange={handleMetodoPagamentoChange}
+          value={metodoPagamento}
+          _loading={isLoadingMetodosPagamento}
+        >
+          {metodosPagamento.map((metodo) => (
+            <option value={metodo.name} key={metodo.name}>
+              {metodo.value}
+            </option>
+          ))}
+        </Select>
+        {Boolean(getErrorMessageByFieldName('metodo_pagamento')) && (
+          <FormErrorMessage>
+            {getErrorMessageByFieldName('metodo_pagamento')}
+          </FormErrorMessage>
+        )}
+      </FormControl>
+
       <Button
         width="full"
         mt={4}

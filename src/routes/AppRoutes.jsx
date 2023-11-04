@@ -19,6 +19,7 @@ import Unauthorized from '../pages/Unauthorized';
 import RequireAuthorization from './RequireAuthorization';
 import Vendas from '../pages/Vendas';
 import NewVenda from '../pages/Vendas/NewVenda';
+import EditVenda from '../pages/Vendas/EditVenda';
 
 export default function AppRoutes() {
   return (
@@ -87,9 +88,9 @@ export default function AppRoutes() {
       <Route element={<RequireAuthorization allowedPermissions={['venda-store']} />}>
         <Route path="/vendas/adicionar" element={<NewVenda />} />
       </Route>
-      {/* <Route element={<RequireAuthorization allowedPermissions={['produto-show']} />}>
-        <Route path="/produtos/editar/:id" element={<EditProdutos />} />
-      </Route> */}
+      <Route element={<RequireAuthorization allowedPermissions={['venda-show']} />}>
+        <Route path="/vendas/editar/:id" element={<EditVenda />} />
+      </Route>
 
       <Route path="/inautorizado" element={<Unauthorized />} />
     </Routes>

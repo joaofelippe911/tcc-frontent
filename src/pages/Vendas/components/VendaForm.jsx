@@ -1,13 +1,18 @@
 import {
+  AbsoluteCenter,
   Box,
   Button,
+  Divider,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Heading,
   Input,
+  Radio,
+  RadioGroup,
   ScaleFade,
   Select,
+  Stack,
   Table,
   TableCaption,
   TableContainer,
@@ -25,22 +30,35 @@ import { AxiosError } from 'axios';
 import { formatValor } from '../../../utils/formatValor';
 import { FiMinusSquare, FiPlusSquare, FiX } from 'react-icons/fi';
 import { onlyNumbers } from '../../../utils/onlyNumbers';
+import { formatValorPorcentagem } from '../../../utils/formatValorPorcentagem';
 
 function mapProdutos(produtos) {
-  return produtos.map((produto) => ({ ...produto, quantidade: produto.pivot.quantidade }));
+  return produtos.map((produto) => ({
+    ...produto,
+    quantidade: produto.pivot.quantidade,
+  }));
 }
 
 export function VendaForm({ onSubmit, venda = undefined }) {
   const [cliente, setCliente] = useState(venda?.cliente_id || '');
-  const [metodoPagamento, setMetodoPagamento] = useState(venda?.metodo_pagamento || '');
+  const [metodoPagamento, setMetodoPagamento] = useState(
+    venda?.metodo_pagamento || ''
+  );
+  const [desconto, setDesconto] = useState(
+    venda?.desconto ? formatValor(venda.desconto.toFixed(2).toString()) : ''
+  );
+  const [tipoDesconto, setTipoDesconto] = useState('VALOR');
   const [isSubmiting, setIsSubmiting] = useState(false);
   const [clientes, setClientes] = useState([]);
   const [produtos, setProdutos] = useState([]);
   const [metodosPagamento, setMetodosPagamento] = useState([]);
-  const [produtosAdicionados, setProdutosAdicionados] = useState(venda?.produtos ? mapProdutos(venda.produtos) : []);
+  const [produtosAdicionados, setProdutosAdicionados] = useState(
+    venda?.produtos ? mapProdutos(venda.produtos) : []
+  );
   const [isLoadingClientes, setIsLoadingClientes] = useState(false);
   const [isLoadingProdutos, setIsLoadingProdutos] = useState(false);
-  const [isLoadingMetodosPagamento, setIsLoadingMetodosPagamento] = useState(false);
+  const [isLoadingMetodosPagamento, setIsLoadingMetodosPagamento] =
+    useState(false);
   const [indexProdutosBeingHighlighted, setIndexProdutosBeingHighlighted] =
     useState([]);
 
@@ -88,7 +106,10 @@ export function VendaForm({ onSubmit, venda = undefined }) {
       setMetodoPagamento(e.target.value);
 
       if (!e.target.value) {
-        setError({ field: 'metodo_pagamento', message: 'Método de pagamento é obrigatório!' });
+        setError({
+          field: 'metodo_pagamento',
+          message: 'Método de pagamento é obrigatório!',
+        });
         return;
       }
 
@@ -96,6 +117,44 @@ export function VendaForm({ onSubmit, venda = undefined }) {
     },
     [setError, removeError]
   );
+
+  const valorTotal = useMemo(() => {
+    let valor = 0;
+
+    produtosAdicionados.forEach(
+      (produto) => (valor += produto.valor * produto.quantidade)
+    );
+
+    return valor;
+  }, [produtosAdicionados]);
+
+  const handleDescontoChange = useCallback(
+    (e) => {
+      if (tipoDesconto === 'PORCENTAGEM') {
+        setDesconto(formatValorPorcentagem(e.target.value));
+        return;
+      }
+
+      setDesconto(formatValor(e.target.value));
+      if (Number(onlyNumbers(e.target.value)) / 100 > valorTotal) {
+        setError({
+          field: 'desconto',
+          message:
+            'Valor do desconto não pode ser maior que o valor total da venda!',
+        });
+        return;
+      }
+
+      removeError('desconto');
+    },
+    [tipoDesconto, valorTotal, setError, removeError]
+  );
+
+  const handleTipoDescontoChange = useCallback((e) => {
+    setTipoDesconto(e);
+    setDesconto('');
+    removeError('desconto');
+  }, [removeError]);
 
   const handleProdutoQuantidadeChange = useCallback((e, produtoIndex) => {
     setProdutosAdicionados((prevState) => {
@@ -206,16 +265,19 @@ export function VendaForm({ onSubmit, venda = undefined }) {
     return produtosAdicionados.filter((produto) => Boolean(produto.id));
   }, [produtosAdicionados]);
 
-  const valorTotal = useMemo(() => {
-    let valor = 0;
+  const valorComDesconto = useMemo(() => {
+    if (!desconto) {
+      return valorTotal;
+    }
 
-    console.log({ produtosAdicionados });
-    produtosAdicionados.forEach(
-      (produto) => (valor += produto.valor * produto.quantidade)
-    );
+    const descontoSemFormatacao = Number(onlyNumbers(desconto)) / 100;
 
-    return valor;
-  }, [produtosAdicionados]);
+    if (tipoDesconto === "PORCENTAGEM") {
+      return (1 - descontoSemFormatacao) * valorTotal; 
+    }
+
+    return valorTotal - descontoSemFormatacao;
+  }, [valorTotal, tipoDesconto, desconto]);
 
   const handleSubmit = useCallback(
     async (e) => {
@@ -226,20 +288,23 @@ export function VendaForm({ onSubmit, venda = undefined }) {
       await onSubmit({
         cliente_id: cliente,
         produtos: produtosAdicionadosValidos,
-        valor_total: valorTotal,
+        valor_total: valorComDesconto,
+        desconto: valorTotal - valorComDesconto,
         metodo_pagamento: metodoPagamento,
       });
 
       setIsSubmiting(false);
     },
-    [onSubmit, cliente, produtosAdicionadosValidos, valorTotal, metodoPagamento]
+    [onSubmit, cliente, produtosAdicionadosValidos, valorTotal, metodoPagamento, valorComDesconto]
   );
 
   useEffect(() => {
+    const controller = new AbortController();
+
     async function loadClientes() {
       try {
         setIsLoadingClientes(true);
-        const { data } = await httpClient.get('/clientes');
+        const { data } = await httpClient.get('/clientes', { signal: controller.signal });
 
         setClientes(data);
         setIsLoadingClientes(false);
@@ -262,7 +327,7 @@ export function VendaForm({ onSubmit, venda = undefined }) {
     async function loadProdutos() {
       try {
         setIsLoadingProdutos(true);
-        const { data } = await httpClient.get('/produtos');
+        const { data } = await httpClient.get('/produtos', { signal: controller.signal });
 
         setProdutos(data);
         setIsLoadingProdutos(false);
@@ -285,7 +350,7 @@ export function VendaForm({ onSubmit, venda = undefined }) {
     async function loadMetodosPagameto() {
       try {
         setIsLoadingMetodosPagamento(true);
-        const { data } = await httpClient.get('/metodos_pagamento');
+        const { data } = await httpClient.get('/metodos_pagamento', { signal: controller.signal });
 
         setMetodosPagamento(data);
         setIsLoadingMetodosPagamento(false);
@@ -296,7 +361,9 @@ export function VendaForm({ onSubmit, venda = undefined }) {
 
         setIsLoadingMetodosPagamento(false);
         toast({
-          title: err.response.data.message || 'Erro ao carregar métodos de pagamento!',
+          title:
+            err.response.data.message ||
+            'Erro ao carregar métodos de pagamento!',
           status: 'error',
           duration: 10000,
           isClosable: true,
@@ -308,6 +375,10 @@ export function VendaForm({ onSubmit, venda = undefined }) {
     loadClientes();
     loadProdutos();
     loadMetodosPagameto();
+
+    return () => {
+      controller.abort();
+    }
   }, [toast]);
 
   const isFormValid =
@@ -342,7 +413,16 @@ export function VendaForm({ onSubmit, venda = undefined }) {
         )}
       </FormControl>
 
-      <TableContainer marginTop={16}>
+      <Box position='relative' padding='10'>
+        <Divider />
+        <AbsoluteCenter bg="#1d202b" px='4'>
+          <Heading as="h4" size="md">
+            Produtos
+          </Heading>
+        </AbsoluteCenter>
+      </Box>
+
+      <TableContainer marginTop={4}>
         <Table variant="simple">
           <TableCaption>
             <Button onClick={handleClickAddProduto} variant="ghost">
@@ -486,14 +566,37 @@ export function VendaForm({ onSubmit, venda = undefined }) {
           </Tbody>
         </Table>
       </TableContainer>
-      <Box
-        display="flex"
+
+      <Stack
+        direction={['column', 'row']}
+        spacing={2}
         alignItems="center"
-        justifyContent="flex-end"
-        padding={4}
       >
-        <Heading as="h4" size="md">Valor Total: {formatValor(valorTotal.toFixed(2).toString())}</Heading>
-      </Box>
+        <RadioGroup onChange={handleTipoDescontoChange} value={tipoDesconto}>
+          <Stack direction="column">
+            <Radio value="PORCENTAGEM">%</Radio>
+            <Radio value="VALOR">R$</Radio>
+          </Stack>
+        </RadioGroup>
+
+        <FormControl
+          isInvalid={Boolean(getErrorMessageByFieldName('desconto'))}
+        >
+          <FormLabel>Desconto</FormLabel>
+          <Input
+            type="text"
+            name="desconto"
+            value={desconto}
+            onChange={handleDescontoChange}
+            placeholder="Digite o desconto"
+          />
+          {Boolean(getErrorMessageByFieldName('desconto')) && (
+            <FormErrorMessage>
+              {getErrorMessageByFieldName('desconto')}
+            </FormErrorMessage>
+          )}
+        </FormControl>
+      </Stack>
 
       <FormControl
         marginTop={4}
@@ -518,6 +621,24 @@ export function VendaForm({ onSubmit, venda = undefined }) {
           </FormErrorMessage>
         )}
       </FormControl>
+
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="flex-end"
+        padding={4}
+      >
+        <Heading as="h4" size="md">
+          Valor Total: {formatValor(valorTotal.toFixed(2).toString())}
+        </Heading>
+        {
+          valorComDesconto !== valorTotal && (
+          <Heading as="h4" size="md" marginLeft={4} color={valorComDesconto >= 0 ? 'green.600' : 'red.600' }>
+            Valor com Desconto: {formatValor((valorComDesconto).toFixed(2).toString())}
+          </Heading>
+          )
+        }
+      </Box>
 
       <Button
         width="full"

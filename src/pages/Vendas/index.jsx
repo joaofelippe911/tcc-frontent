@@ -132,6 +132,7 @@ export default function Vendas() {
             <Thead>
               <Tr>
                 <Th>Cliente</Th>
+                <Th>Desconto</Th>
                 <Th>Valor</Th>
                 <Th>Quantidade Produtos</Th>
                 <Th>Método Pagamento</Th>
@@ -150,6 +151,7 @@ export default function Vendas() {
                 return (
                   <Tr key={venda.id}>
                     <Td>{venda.cliente.nome}</Td>
+                    <Td>{formatValor(venda.desconto.toFixed(2).toString())}</Td>
                     <Td>{formatValor(venda.valor_total.toFixed(2).toString())}</Td>
                     <Td>{quantidadeProdutos}</Td>
                     <Td>{venda.metodo_pagamento}</Td>

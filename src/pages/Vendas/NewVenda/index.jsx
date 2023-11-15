@@ -22,7 +22,7 @@ export default function NewVenda() {
         navigate('/vendas');
       } catch (err) {
         toast({
-          title: err.response.data.message || 'Erro ao cadastrar venda!',
+          title: err?.response?.data?.message || 'Erro ao cadastrar venda!',
           status: 'error',
           duration: 10000,
           isClosable: true,

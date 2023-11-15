@@ -33,7 +33,7 @@ export default function EditProduto() {
 
         setIsLoading(false);
         toast({
-          title: err.response.data.message || 'Erro ao buscar dados do produto!',
+          title: err?.response?.data?.message || 'Erro ao buscar dados do produto!',
           status: 'error',
           duration: 10000,
           isClosable: true,
@@ -75,7 +75,7 @@ export default function EditProduto() {
         navigate('/produtos');
       } catch (err) {
         toast({
-          title: err.response.data.message || 'Erro ao editar produto!',
+          title: err?.response?.data?.message || 'Erro ao editar produto!',
           status: 'error',
           duration: 10000,
           isClosable: true,

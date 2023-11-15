@@ -68,7 +68,7 @@ export default function Fornecedores() {
     } catch (err) {
       setIsLoadingDelete(false);
       toast({
-        title: err.response.data.message || 'Erro ao deletar fornecedor!',
+        title: err?.response?.data?.message || 'Erro ao deletar fornecedor!',
         status: 'error',
         duration: 10000,
         isClosable: true,
@@ -101,7 +101,7 @@ export default function Fornecedores() {
 
         setIsLoading(false);
         toast({
-          title: err.response.data.message || 'Erro ao buscar os fornecedores!',
+          title: err?.response?.data?.message || 'Erro ao buscar os fornecedores!',
           status: 'error',
           duration: 10000,
           isClosable: true,

@@ -68,7 +68,7 @@ export default function Clientes() {
     } catch (err) {
       setIsLoadingDelete(false);
       toast({
-        title: err.response.data.message || 'Erro ao deletar cliente!',
+        title: err?.response?.data?.message || 'Erro ao deletar cliente!',
         status: 'error',
         duration: 10000,
         isClosable: true,
@@ -101,7 +101,7 @@ export default function Clientes() {
 
         setIsLoading(false);
         toast({
-          title: err.response.data.message || 'Erro ao buscar os clientes!',
+          title: err?.response?.data?.message || 'Erro ao buscar os clientes!',
           status: 'error',
           duration: 10000,
           isClosable: true,

@@ -315,7 +315,7 @@ export function VendaForm({ onSubmit, venda = undefined }) {
 
         setIsLoadingClientes(false);
         toast({
-          title: err.response.data.message || 'Erro ao carregar clientes!',
+          title: err?.response?.data?.message || 'Erro ao carregar clientes!',
           status: 'error',
           duration: 10000,
           isClosable: true,
@@ -338,7 +338,7 @@ export function VendaForm({ onSubmit, venda = undefined }) {
 
         setIsLoadingProdutos(false);
         toast({
-          title: err.response.data.message || 'Erro ao carregar produtos!',
+          title: err?.response?.data?.message || 'Erro ao carregar produtos!',
           status: 'error',
           duration: 10000,
           isClosable: true,
@@ -362,7 +362,7 @@ export function VendaForm({ onSubmit, venda = undefined }) {
         setIsLoadingMetodosPagamento(false);
         toast({
           title:
-            err.response.data.message ||
+            err?.response?.data?.message ||
             'Erro ao carregar métodos de pagamento!',
           status: 'error',
           duration: 10000,

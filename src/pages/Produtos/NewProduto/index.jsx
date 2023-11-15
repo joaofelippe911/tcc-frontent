@@ -34,7 +34,7 @@ export default function NewProduto() {
       } catch (err) {
         
           toast({
-              title: err.response.data.message || 'Erro ao cadastrar produto!',
+              title: err?.response?.data?.message || 'Erro ao cadastrar produto!',
               status: 'error',
               duration: 10000,
               isClosable: true,

@@ -22,7 +22,7 @@ export default function NewFornecedor() {
         navigate('/fornecedores');
       } catch (err) {
           toast({
-              title: err.response.data.message || 'Erro ao cadastrar fornecedor!',
+              title: err?.response?.data?.message || 'Erro ao cadastrar fornecedor!',
               status: 'error',
               duration: 10000,
               isClosable: true,

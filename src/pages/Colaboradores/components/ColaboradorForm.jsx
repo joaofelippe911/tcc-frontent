@@ -170,7 +170,7 @@ export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
         }
 
         toast({
-          title: err.response.data.message || 'Erro ao carregar funções!',
+          title: err?.response?.data?.message || 'Erro ao carregar funções!',
           status: 'error',
           duration: 10000,
           isClosable: true,

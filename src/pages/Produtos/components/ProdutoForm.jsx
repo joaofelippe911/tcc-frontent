@@ -184,7 +184,7 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
         }
 
         toast({
-          title: err.response.data.message || 'Erro ao carregar fornecedores!',
+          title: err?.response?.data?.message || 'Erro ao carregar fornecedores!',
           status: 'error',
           duration: 10000,
           isClosable: true,

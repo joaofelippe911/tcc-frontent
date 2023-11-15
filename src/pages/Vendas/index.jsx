@@ -67,7 +67,7 @@ export default function Vendas() {
     } catch (err) {
       setIsLoadingDelete(false);
       toast({
-        title: err.response.data.message || 'Erro ao deletar venda!',
+        title: err?.response?.data?.message || 'Erro ao deletar venda!',
         status: 'error',
         duration: 10000,
         isClosable: true,
@@ -100,7 +100,7 @@ export default function Vendas() {
 
         setIsLoading(false);
         toast({
-          title: err.response.data.message || 'Erro ao buscar as vendas!',
+          title: err?.response?.data?.message || 'Erro ao buscar as vendas!',
           status: 'error',
           duration: 10000,
           isClosable: true,

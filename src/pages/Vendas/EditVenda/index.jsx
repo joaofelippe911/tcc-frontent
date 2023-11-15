@@ -34,7 +34,7 @@ export default function EditVenda() {
 
         setIsLoading(false);
         toast({
-          title: err.response.data.message || 'Erro ao buscar dados da venda!',
+          title: err?.response?.data?.message || 'Erro ao buscar dados da venda!',
           status: 'error',
           duration: 10000,
           isClosable: true,
@@ -67,7 +67,7 @@ export default function EditVenda() {
         navigate('/vendas');
       } catch (err) {
         toast({
-          title: err.response.data.message || 'Erro ao editar venda!',
+          title: err?.response?.data?.message || 'Erro ao editar venda!',
           status: 'error',
           duration: 10000,
           isClosable: true,

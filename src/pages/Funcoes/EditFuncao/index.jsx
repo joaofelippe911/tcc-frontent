@@ -32,7 +32,7 @@ export default function EditFuncao() {
         }
 
         toast({
-          title: err.response.data.message || 'Erro ao buscar dados da função!',
+          title: err?.response?.data?.message || 'Erro ao buscar dados da função!',
           status: 'error',
           duration: 10000,
           isClosable: true,
@@ -65,7 +65,7 @@ export default function EditFuncao() {
         navigate('/funcoes');
       } catch (err) {
         toast({
-          title: err.response.data.message || 'Erro ao editar função!',
+          title: err?.response?.data?.message || 'Erro ao editar função!',
           status: 'error',
           duration: 10000,
           isClosable: true,

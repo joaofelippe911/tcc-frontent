@@ -33,7 +33,7 @@ export default function EditCliente() {
         
         setIsLoading(false);
         toast({
-          title: err.response.data.message || 'Erro ao buscar dados do cliente!',
+          title: err?.response?.data?.message || 'Erro ao buscar dados do cliente!',
           status: 'error',
           duration: 10000,
           isClosable: true,
@@ -64,7 +64,7 @@ export default function EditCliente() {
         navigate('/clientes');
       } catch (err) {
         toast({
-          title: err.response.data.message || 'Erro ao editar cliente!',
+          title: err?.response?.data?.message || 'Erro ao editar cliente!',
           status: 'error',
           duration: 10000,
           isClosable: true,

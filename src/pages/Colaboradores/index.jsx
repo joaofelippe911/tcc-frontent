@@ -72,7 +72,7 @@ export default function Colaborador() {
       setIsLoadingDelete(false);
 
       toast({
-        title: err.response.data.message || 'Erro ao deletar colaborador!',
+        title: err?.response?.data?.message || 'Erro ao deletar colaborador!',
         status: 'error',
         duration: 10000,
         isClosable: true,
@@ -105,7 +105,7 @@ export default function Colaborador() {
 
         setIsLoading(false);
         toast({
-          title: err.response.data.message || 'Erro ao buscar os colaboradores!',
+          title: err?.response?.data?.message || 'Erro ao buscar os colaboradores!',
           status: 'error',
           duration: 10000,
           isClosable: true,

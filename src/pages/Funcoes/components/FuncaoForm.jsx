@@ -88,7 +88,7 @@ export function FuncaoForm({ onSubmit, funcao = undefined }) {
 
         setIsLoadingPermissoes(false);
         toast({
-          title: err.response.data.message || 'Erro ao carregar permissões!',
+          title: err?.response?.data?.message || 'Erro ao carregar permissões!',
           status: 'error',
           duration: 10000,
           isClosable: true,

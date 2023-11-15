@@ -68,7 +68,7 @@ export default function ChangePasswordModal({
     } catch (err) {
       setIsSubmiting(false);
       toast({
-        title: err.response.data.message || 'Erro ao alterar senha!',
+        title: err?.response?.data?.message || 'Erro ao alterar senha!',
         status: 'error',
         duration: 10000,
         isClosable: true,

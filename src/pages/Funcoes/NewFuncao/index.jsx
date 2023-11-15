@@ -22,7 +22,7 @@ export default function NewFuncao() {
         navigate('/funcoes');
       } catch (err) {
         toast({
-          title: err.response.data.message || 'Erro ao cadastrar funcão!',
+          title: err?.response?.data?.message || 'Erro ao cadastrar funcão!',
           status: 'error',
           duration: 10000,
           isClosable: true,

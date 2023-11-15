@@ -33,7 +33,7 @@ export default function EditFornecedor() {
 
         setIsLoading(false);
         toast({
-          title: err.response.data.message || 'Erro ao buscar dados do fornecedor!',
+          title: err?.response?.data?.message || 'Erro ao buscar dados do fornecedor!',
           status: 'error',
           duration: 10000,
           isClosable: true,
@@ -64,7 +64,7 @@ export default function EditFornecedor() {
         navigate('/Fornecedores');
       } catch (err) {
         toast({
-          title: err.response.data.message || 'Erro ao editar fornecedor!',
+          title: err?.response?.data?.message || 'Erro ao editar fornecedor!',
           status: 'error',
           duration: 10000,
           isClosable: true,

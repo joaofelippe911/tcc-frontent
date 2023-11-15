@@ -30,6 +30,7 @@ import {
 } from 'react-icons/fi';
 import { PiFlowerTulipFill } from 'react-icons/pi';
 import { RiUserStarLine } from 'react-icons/ri';
+import { TbReportSearch } from "react-icons/tb";
 import logo from '../../assets/images/logo.png';
 import AppRoutes from '../../routes/AppRoutes';
 import { useAuthContext } from '../../contexts/AuthContext';
@@ -38,10 +39,11 @@ const LinkItems = [
   { name: 'Home', icon: FiHome, path: '/', dontNeedPermission: true },
   { name: 'Vendas', icon: FiShoppingCart, path: '/vendas', permission: 'venda-index' },
   { name: 'Clientes', icon: RiUserStarLine, path: '/clientes', permission: 'cliente-index' },
+  { name: 'Produtos', icon: PiFlowerTulipFill, path: '/produtos', permission: 'produto-index' },
+  { name: 'Fornecedores', icon: FiTruck, path: '/fornecedores', permission: 'fornecedor-index' },
   { name: 'Colaboradores', icon: FiUsers, path: '/colaboradores', permission: 'colaborador-index' },
   { name: 'Funções', icon: FiShield, path: '/funcoes', permission: 'funcao-index' },
-  { name: 'Fornecedores', icon: FiTruck, path: '/fornecedores', permission: 'fornecedor-index' },
-  { name: 'Produtos', icon: PiFlowerTulipFill, path: '/produtos', permission: 'produto-index' },
+  { name: 'Relatórios', icon: TbReportSearch, path: '/relatorios', dontNeedPermission: true },
 ];
 
 const SidebarContent = ({ onClose, ...rest }) => {

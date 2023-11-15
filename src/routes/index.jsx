@@ -1,4 +1,4 @@
-import { Box, Container, Spinner, Stack } from '@chakra-ui/react';
+import { Box, Container, Spinner } from '@chakra-ui/react';
 import Layout from '../components/Layout';
 import { useAuthContext } from '../contexts/AuthContext';
 import SignRoutes from './SignRoutes';

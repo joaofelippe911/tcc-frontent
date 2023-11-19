@@ -32,12 +32,10 @@ export default function RelatorioForm({ relatorio, title }) {
       return;
     }
 
-    const formattedInitialDate = inicio.toISOString().split('T')[0].split('-').reverse().join("-");
-    const formattedEndDate = fim.toISOString().split('T')[0].split('-').reverse().join("-");
+    const formattedInitialDate = inicio.toLocaleDateString("pt-BR").replaceAll("/", "-");
+    const formattedEndDate = fim.toLocaleDateString("pt-BR").replaceAll("/", "-");
 
     window.open(`http://localhost:8000/api/${relatorio}?inicio=${formattedInitialDate}&fim=${formattedEndDate}`);
-
-    console.log({inicio, fim, formattedInitialDate, formattedEndDate})
   }, [inicio, fim, toast, relatorio]);
 
   return (

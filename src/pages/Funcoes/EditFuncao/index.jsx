@@ -80,7 +80,7 @@ export default function EditFuncao() {
     <Box position="relative">
       <Spinner spinning={isLoading} />
       <Box p={4}>
-        <Heading marginBottom={8}>Editar função</Heading>
+        <Heading marginBottom={8}>Editar Função</Heading>
         <FuncaoForm onSubmit={handleSubmit} funcao={funcao} key={funcao?.id} />
       </Box>
     </Box>

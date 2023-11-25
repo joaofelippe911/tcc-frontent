@@ -85,7 +85,7 @@ export default function EditColaborador() {
     <Box position="relative">
       <Spinner spinning={isLoading} />
       <Box p={4}>
-        <Heading marginBottom={8}>Editar colaborador</Heading>
+        <Heading marginBottom={8}>Editar Colaborador</Heading>
         <ColaboradorForm
           onSubmit={handleSubmit}
           colaborador={colaborador}

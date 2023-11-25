@@ -250,8 +250,3 @@ export function ClienteForm({ onSubmit, cliente = undefined }) {
     </form>
   );
 }
-
-  /* <FormControl mt={6}>
-    <FormLabel>Senha</FormLabel>
-    <Input type="password" placeholder="********" />
-</FormControl> */

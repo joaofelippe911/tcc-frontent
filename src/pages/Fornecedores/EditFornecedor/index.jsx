@@ -79,7 +79,7 @@ export default function EditFornecedor() {
     <Box position="relative">
       <Spinner spinning={isLoading} />
       <Box p={4}>
-        <Heading marginBottom={8}>Editar fornecedor</Heading>
+        <Heading marginBottom={8}>Editar Fornecedor</Heading>
         <FornecedorForm
           onSubmit={handleSubmit}
           Fornecedor={fornecedor}

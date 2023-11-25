@@ -82,7 +82,7 @@ export default function EditVenda() {
     <Box position="relative">
       <Spinner spinning={isLoading} />
       <Box p={4}>
-        <Heading marginBottom={8}>Editar venda</Heading>
+        <Heading marginBottom={8}>Editar Venda</Heading>
         <VendaForm
           onSubmit={handleSubmit}
           venda={venda}

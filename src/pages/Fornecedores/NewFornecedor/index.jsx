@@ -35,7 +35,7 @@ export default function NewFornecedor() {
 
   return (
     <Box p={4}>
-      <Heading marginBottom={8}>Adicionar fornecedor</Heading>
+      <Heading marginBottom={8}>Adicionar Fornecedor</Heading>
       <FornecedorForm onSubmit={handleSubmit} />
     </Box>
   );

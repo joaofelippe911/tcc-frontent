@@ -79,7 +79,7 @@ export default function EditCliente() {
     <Box position="relative">
       <Spinner spinning={isLoading} />
       <Box p={4}>
-        <Heading marginBottom={8}>Editar cliente</Heading>
+        <Heading marginBottom={8}>Editar Cliente</Heading>
         <ClienteForm
           onSubmit={handleSubmit}
           cliente={cliente}

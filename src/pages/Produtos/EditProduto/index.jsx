@@ -90,7 +90,7 @@ export default function EditProduto() {
     <Box position="relative">
       <Spinner spinning={isLoading} />
       <Box p={4}>
-        <Heading marginBottom={8}>Editar produto</Heading>
+        <Heading marginBottom={8}>Editar Produto</Heading>
         <ProdutoForm
           onSubmit={handleSubmit}
           produto={produto}

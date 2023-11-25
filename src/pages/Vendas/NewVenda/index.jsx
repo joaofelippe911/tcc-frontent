@@ -35,7 +35,7 @@ export default function NewVenda() {
 
   return (
     <Box p={4}>
-      <Heading marginBottom={8}>Adicionar venda</Heading>
+      <Heading marginBottom={8}>Adicionar Venda</Heading>
       <VendaForm onSubmit={handleSubmit} />
     </Box>
   );

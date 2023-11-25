@@ -35,7 +35,7 @@ export default function NewFuncao() {
 
   return (
     <Box p={4}>
-      <Heading marginBottom={8}>Adicionar função</Heading>
+      <Heading marginBottom={8}>Adicionar Função</Heading>
       <FuncaoForm onSubmit={handleSubmit} />
     </Box>
   );

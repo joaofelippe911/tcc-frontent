@@ -82,7 +82,7 @@ export default function EditFornecedor() {
         <Heading marginBottom={8}>Editar Fornecedor</Heading>
         <FornecedorForm
           onSubmit={handleSubmit}
-          Fornecedor={fornecedor}
+          fornecedor={fornecedor}
           key={fornecedor?.id}
           />
       </Box>

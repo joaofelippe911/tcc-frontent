@@ -12,7 +12,7 @@ import { formatCnpj } from "../../../utils/formatCnpj";
 
 export function FornecedorForm({ onSubmit, fornecedor = undefined }) {
   const [nome, setNome] = useState(fornecedor?.nome || "");
-  const [cnpj, setCnpj] = useState(fornecedor?.cnpj || "");
+  const [cnpj, setCnpj] = useState(fornecedor?.cnpj ? formatCnpj(fornecedor.cnpj) : "");
   const [isSubmiting, setIsSubmiting] = useState(false);
 
   const { setError, removeError, errors, getErrorMessageByFieldName } =

@@ -55,8 +55,6 @@ export default function EditProduto() {
       try {
         const formData = new FormData();
 
-        console.log({edit: produto});
-
         Object.entries(produto).forEach(([name, value]) => {
           formData.append(name, value);
         })

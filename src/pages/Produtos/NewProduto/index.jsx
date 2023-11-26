@@ -13,9 +13,6 @@ export default function NewProduto() {
       try {
         const formData = new FormData();
 
-
-        console.log({new: produto});
-
         Object.entries(produto).forEach(([name, value]) => {
           formData.append(name, value);
         })

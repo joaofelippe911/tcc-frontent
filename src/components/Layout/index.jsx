@@ -37,13 +37,13 @@ import { useAuthContext } from '../../contexts/AuthContext';
 
 const LinkItems = [
   { name: 'Home', icon: FiHome, path: '/', dontNeedPermission: true },
-  { name: 'Vendas', icon: FiShoppingCart, path: '/vendas', permission: 'venda-index' },
-  { name: 'Clientes', icon: RiUserStarLine, path: '/clientes', permission: 'cliente-index' },
-  { name: 'Produtos', icon: PiFlowerTulipFill, path: '/produtos', permission: 'produto-index' },
-  { name: 'Fornecedores', icon: FiTruck, path: '/fornecedores', permission: 'fornecedor-index' },
-  { name: 'Colaboradores', icon: FiUsers, path: '/colaboradores', permission: 'colaborador-index' },
-  { name: 'Funções', icon: FiShield, path: '/funcoes', permission: 'funcao-index' },
-  { name: 'Relatórios', icon: TbReportSearch, path: '/relatorios', dontNeedPermission: true },
+  { name: 'Vendas', icon: FiShoppingCart, path: '/vendas', permissions: ['venda-index'] },
+  { name: 'Clientes', icon: RiUserStarLine, path: '/clientes', permissions: ['cliente-index'] },
+  { name: 'Produtos', icon: PiFlowerTulipFill, path: '/produtos', permissions: ['produto-index'] },
+  { name: 'Fornecedores', icon: FiTruck, path: '/fornecedores', permissions: ['fornecedor-index'] },
+  { name: 'Colaboradores', icon: FiUsers, path: '/colaboradores', permissions: ['colaborador-index'] },
+  { name: 'Funções', icon: FiShield, path: '/funcoes', permissions: ['funcao-index'] },
+  { name: 'Relatórios', icon: TbReportSearch, path: '/relatorios', permissions: ['relatorio-vendas', 'relatorio-produtos-mais-vendidos', 'relatorio-clientes-que-mais-compraram'] },
 ];
 
 const SidebarContent = ({ onClose, ...rest }) => {
@@ -70,7 +70,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => {
-        if (!link.dontNeedPermission && !user.funcao.permissoes.find((permission) => permission.nome === link.permission)) {
+        if (!link.dontNeedPermission && !user.funcao.permissoes.some((permission) => link.permissions.some((p) => p === permission.nome))) {
           return null;
         }
 

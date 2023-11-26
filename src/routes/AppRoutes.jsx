@@ -93,7 +93,10 @@ export default function AppRoutes() {
         <Route path="/vendas/editar/:id" element={<EditVenda />} />
       </Route>
 
-      <Route path="/relatorios" element={<Relatorios />} />
+      {/* Relatórios */}
+      <Route element={<RequireAuthorization allowedPermissions={['relatorio-vendas', 'relatorio-produtos-mais-vendidos', 'relatorio-clientes-que-mais-compraram']} />}>
+        <Route path="/relatorios" element={<Relatorios />} />
+      </Route>
 
       <Route path="/inautorizado" element={<Unauthorized />} />
     </Routes>

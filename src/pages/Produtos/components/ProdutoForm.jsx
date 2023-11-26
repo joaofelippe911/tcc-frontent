@@ -9,6 +9,7 @@ import {
   Heading,
   Input,
   Select,
+  Spinner,
   Stack,
   Text,
   useToast,
@@ -23,6 +24,7 @@ import { PreviewImage } from "./PreviewImage";
 
 import flowerImage from '../../../assets/images/flower.png';
 import { formatValorParaApi } from '../../../utils/formatValorParaApi';
+import { MdArrowDropDown } from 'react-icons/md';
 
 const flowerImageAnimation = {
   rest: {
@@ -75,6 +77,7 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
   const [fornecedor_id, setFornecedor] = useState(produto?.fornecedor_id || "");
   const [isSubmiting, setIsSubmiting] = useState(false);
   const [fornecedores, setFornecedores] = useState([]);
+  const [isLoadingFornecedores, setIsLoadingFornecedores] = useState(true);
 
   const toast = useToast();
   
@@ -175,14 +178,17 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
   useEffect(() => {
     async function loadFornecedores() {
       try {
+        setIsLoadingFornecedores(true);
         const { data } = await httpClient.get('/fornecedores');
 
         setFornecedores(data);
+        setIsLoadingFornecedores(false);
       } catch (err) {
         if (err instanceof AxiosError && err.name === 'CanceledError') {
           return;
         }
 
+        setIsLoadingFornecedores(false);
         toast({
           title: err?.response?.data?.message || 'Erro ao carregar fornecedores!',
           status: 'error',
@@ -291,6 +297,8 @@ export function ProdutoForm({ onSubmit, produto = undefined }) {
           placeholder="Selecione o fornecedor"
           onChange={handleFornecedorChange}
           value={fornecedor_id}
+          icon={isLoadingFornecedores ? <Spinner /> : <MdArrowDropDown />}
+          _loading={isLoadingFornecedores}
         >
           {
             fornecedores.map((fornecedor) => (

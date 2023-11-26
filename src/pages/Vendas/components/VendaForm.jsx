@@ -12,6 +12,7 @@ import {
   RadioGroup,
   ScaleFade,
   Select,
+  Spinner,
   Stack,
   Table,
   TableCaption,
@@ -23,6 +24,8 @@ import {
   Tr,
   useToast,
 } from '@chakra-ui/react';
+
+import { MdArrowDropDown } from 'react-icons/md';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import useErrors from '../../../hooks/useErrors';
 import { httpClient } from '../../../services/HttpClient';
@@ -55,10 +58,10 @@ export function VendaForm({ onSubmit, venda = undefined }) {
   const [produtosAdicionados, setProdutosAdicionados] = useState(
     venda?.produtos ? mapProdutos(venda.produtos) : []
   );
-  const [isLoadingClientes, setIsLoadingClientes] = useState(false);
-  const [isLoadingProdutos, setIsLoadingProdutos] = useState(false);
+  const [isLoadingClientes, setIsLoadingClientes] = useState(true);
+  const [isLoadingProdutos, setIsLoadingProdutos] = useState(true);
   const [isLoadingMetodosPagamento, setIsLoadingMetodosPagamento] =
-    useState(false);
+    useState(true);
   const [indexProdutosBeingHighlighted, setIndexProdutosBeingHighlighted] =
     useState([]);
 
@@ -398,6 +401,7 @@ export function VendaForm({ onSubmit, venda = undefined }) {
           placeholder="Selecione o cliente"
           onChange={handleClienteChange}
           value={cliente}
+          icon={isLoadingClientes ? <Spinner /> : <MdArrowDropDown />}
           _loading={isLoadingClientes}
         >
           {clientes.map((cliente) => (
@@ -478,6 +482,7 @@ export function VendaForm({ onSubmit, venda = undefined }) {
                           onChange={(e) => handleProdutoIdChange(e, index)}
                           value={produto.id || ''}
                           _loading={isLoadingProdutos}
+                          icon={isLoadingProdutos ? <Spinner /> : <MdArrowDropDown />}
                           disabled={produto.id || ''}
                           key={`select-produto-${produto.id}`}
                         >
@@ -607,6 +612,7 @@ export function VendaForm({ onSubmit, venda = undefined }) {
           placeholder="Selecione o método de pagamento"
           onChange={handleMetodoPagamentoChange}
           value={metodoPagamento}
+          icon={isLoadingMetodosPagamento ? <Spinner /> : <MdArrowDropDown />}
           _loading={isLoadingMetodosPagamento}
         >
           {metodosPagamento.map((metodo) => (

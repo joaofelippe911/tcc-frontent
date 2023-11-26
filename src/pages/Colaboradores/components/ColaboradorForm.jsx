@@ -5,6 +5,7 @@ import {
   FormLabel,
   Input,
   Select,
+  Spinner,
   useToast,
 } from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';
@@ -17,6 +18,7 @@ import { AxiosError } from 'axios';
 import isEmailValid from '../../../utils/isEmailValid';
 import ChangePasswordModal from './ChangePasswordModal';
 import isPasswordValid from '../../../utils/isPasswordValid';
+import { MdArrowDropDown } from 'react-icons/md';
 
 export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
   const [nome, setNome] = useState(colaborador?.nome || '');
@@ -28,6 +30,7 @@ export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
   const [email, setEmail] = useState(colaborador?.email || '');
   const [password, setPassowrd] = useState(colaborador?.password || '');
   const [isChangePasswordModalVisible, setIsChangePasswordModalVisible] = useState(false);
+  const [isLoadingFuncoes, setIsLoadingFuncoes] = useState(true);
 
   const toast = useToast();
   const { setError, removeError, errors, getErrorMessageByFieldName } =
@@ -161,14 +164,17 @@ export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
   useEffect(() => {
     async function loadFuncoes() {
       try {
+        setIsLoadingFuncoes(true);
         const { data } = await httpClient.get('/funcoes');
 
         setFuncoes(data);
+        setIsLoadingFuncoes(false);
       } catch (err) {
         if (err instanceof AxiosError && err.name === 'CanceledError') {
           return;
         }
 
+        setIsLoadingFuncoes(false);
         toast({
           title: err?.response?.data?.message || 'Erro ao carregar funções!',
           status: 'error',
@@ -254,11 +260,12 @@ export function ColaboradorForm({ onSubmit, colaborador = undefined }) {
           isInvalid={Boolean(getErrorMessageByFieldName('funcao'))}
         >
           <FormLabel>Função</FormLabel>
-          {/* funcao */}
           <Select
             placeholder="Selecione a função"
             onChange={handleFuncaoChange}
             value={funcao_id}
+            icon={isLoadingFuncoes ? <Spinner /> : <MdArrowDropDown />}
+            _loading={isLoadingFuncoes}
           >
             {funcoes.map((funcao) => (
               <option value={funcao.id} key={funcao.id}>
